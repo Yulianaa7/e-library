@@ -13,13 +13,13 @@ class PengembalianController extends Controller
     {
         // Ambil peminjaman yang belum dikembalikan
         $peminjaman = Peminjaman_Buku::join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
-                                     ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
-                                     ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
-                                     ->leftJoin('pengembalian_buku', 'pengembalian_buku.id_peminjaman', '=', 'peminjaman_buku.id_peminjaman')
-                                     ->whereNull('pengembalian_buku.id_pengembalian_buku')
-                                     ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
-                                     ->orderBy('peminjaman_buku.tanggal_kembali', 'asc')
-                                     ->get();
+            ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
+            ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
+            ->leftJoin('pengembalian_buku', 'pengembalian_buku.id_peminjaman', '=', 'peminjaman_buku.id_peminjaman')
+            ->whereNull('pengembalian_buku.id_pengembalian_buku')
+            ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
+            ->orderBy('peminjaman_buku.tanggal_kembali', 'asc')
+            ->get();
 
         $mode = 'index';
 
@@ -29,16 +29,16 @@ class PengembalianController extends Controller
     public function create(Request $request)
     {
         $id = $request->id;
-        
+
         $peminjaman = Peminjaman_Buku::join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
-                                     ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
-                                     ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
-                                     ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
-                                     ->where('peminjaman_buku.id_peminjaman', $id)
-                                     ->firstOrFail();
-        
+            ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
+            ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
+            ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
+            ->where('peminjaman_buku.id_peminjaman', $id)
+            ->firstOrFail();
+
         $mode = 'create';
-        
+
         return view('pengembalian.pengembalian', compact('peminjaman', 'mode'));
     }
 
@@ -48,36 +48,41 @@ class PengembalianController extends Controller
             'id_peminjaman' => 'required|exists:peminjaman_buku,id_peminjaman'
         ]);
 
-        // Cek apakah sudah pernah dikembalikan (gunakan id_peminjaman sesuai foreign key di tabel pengembalian_buku)
         $cek_kembali = Pengembalian_Buku::where('id_peminjaman', $request->id_peminjaman)->first();
-        
+
         if ($cek_kembali) {
             return redirect()->route('pengembalian.index')->with('error', 'Buku ini sudah pernah dikembalikan.');
         }
 
-        // Ambil data peminjaman
         $dt_kembali = Peminjaman_Buku::where('id_peminjaman', $request->id_peminjaman)->first();
-        
-        // Hitung denda
-        $tanggal_sekarang = Carbon::now()->format('Y-m-d');
-        $tanggal_kembali = Carbon::parse($dt_kembali->tanggal_kembali);
+
+        // 🔥 PERBAIKAN PERHITUNGAN DENDA
+        $today = \Carbon\Carbon::now()->startOfDay();
+        $tanggal_kembali = \Carbon\Carbon::parse($dt_kembali->tanggal_kembali)->startOfDay();
         $dendaperhari = 1500;
-        
-        $today = Carbon::now()->startOfDay();
-        $dueDate = $tanggal_kembali->startOfDay();
-        
-        if ($today->gt($dueDate)) {
-            $jumlah_hari = $today->diffInDays($dueDate);
-            $denda = $jumlah_hari * $dendaperhari;
-        } else {
-            $denda = 0;
+
+        // Hitung hari terlambat
+        $hariTerlambat = 0;
+        $denda = 0;
+
+        if ($today->gt($tanggal_kembali)) {
+            // Gunakan diffInDays dengan parameter false untuk hasil negatif jika terlambat
+            $hariTerlambat = $tanggal_kembali->diffInDays($today, false);
+            $hariTerlambat = abs($hariTerlambat); // Ambil nilai absolut
+            $denda = $hariTerlambat * $dendaperhari;
         }
 
-        // Simpan pengembalian (id_peminjaman di tabel pengembalian_buku mengacu ke id_peminjaman_buku di tabel peminjaman_buku)
+        // Simpan pengembalian
         Pengembalian_Buku::create([
             'id_peminjaman' => $request->id_peminjaman,
-            'tanggal_pengembalian' => $tanggal_sekarang,
+            'tanggal_pengembalian' => $today->format('Y-m-d'),
             'denda' => $denda,
+        ]);
+
+        // Update status peminjaman
+        $dt_kembali->update([
+            'status' => 'Dikembalikan',
+            'tanggal_dikembalikan' => $today->format('Y-m-d')
         ]);
 
         // Kembalikan stok buku
@@ -86,11 +91,11 @@ class PengembalianController extends Controller
             $buku->increment('stok');
         }
 
-        $message = 'Buku berhasil dikembalikan!';
+        // 🔥 PESAN NOTIFIKASI YANG BENAR
         if ($denda > 0) {
-            $message .= ' Total denda: Rp ' . number_format($denda, 0, ',', '.');
+            $message = "Buku berhasil dikembalikan! Terlambat {$hariTerlambat} hari. Total denda: Rp " . number_format($denda, 0, ',', '.');
         } else {
-            $message .= ' Tidak ada denda.';
+            $message = 'Buku berhasil dikembalikan! Tidak ada denda.';
         }
 
         return redirect()->route('pengembalian.index')->with('success', $message);
@@ -99,13 +104,19 @@ class PengembalianController extends Controller
     public function show(string $id)
     {
         $pengembalian = Pengembalian_Buku::join('peminjaman_buku', 'peminjaman_buku.id_peminjaman', '=', 'pengembalian_buku.id_peminjaman')
-                                         ->join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
-                                         ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
-                                         ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
-                                         ->select('pengembalian_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku',
-                                                  'peminjaman_buku.tgl_pinjam', 'peminjaman_buku.tanggal_kembali')
-                                         ->where('pengembalian_buku.id_pengembalian_buku', $id)
-                                         ->firstOrFail();
+            ->join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
+            ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
+            ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
+            ->select(
+                'pengembalian_buku.*',
+                'siswa.nama_siswa',
+                'kelas.nama_kelas',
+                'buku.nama_buku',
+                'peminjaman_buku.tanggal_pinjam',
+                'peminjaman_buku.tanggal_kembali'
+            )
+            ->where('pengembalian_buku.id_pengembalian_buku', $id)
+            ->firstOrFail();
 
         return view('pengembalian.show', compact('pengembalian'));
     }
@@ -114,10 +125,10 @@ class PengembalianController extends Controller
     {
         $pengembalian = Pengembalian_Buku::findOrFail($id);
         $peminjaman = Peminjaman_Buku::join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
-                                     ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
-                                     ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
-                                     ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
-                                     ->get();
+            ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
+            ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
+            ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
+            ->get();
 
         return view('pengembalian.edit', compact('pengembalian', 'peminjaman'));
     }
@@ -131,12 +142,37 @@ class PengembalianController extends Controller
         ]);
 
         $pengembalian = Pengembalian_Buku::findOrFail($id);
-        
+
+        // Simpan id_peminjaman lama untuk update status
+        $old_id_peminjaman = $pengembalian->id_peminjaman;
+
+        // Update data pengembalian
         $pengembalian->update([
             'id_peminjaman' => $request->id_peminjaman,
             'tanggal_pengembalian' => $request->tanggal_pengembalian,
             'denda' => $request->denda,
         ]);
+
+        // 🔥 SINKRONISASI - Jika id_peminjaman berubah
+        if ($old_id_peminjaman != $request->id_peminjaman) {
+            // Kembalikan status peminjaman lama ke 'Dipinjam'
+            $old_peminjaman = Peminjaman_Buku::find($old_id_peminjaman);
+            if ($old_peminjaman) {
+                $old_peminjaman->update([
+                    'status' => 'Dipinjam',
+                    'tanggal_dikembalikan' => null
+                ]);
+            }
+        }
+
+        // Update status peminjaman baru
+        $peminjaman = Peminjaman_Buku::find($request->id_peminjaman);
+        if ($peminjaman) {
+            $peminjaman->update([
+                'status' => 'Dikembalikan',
+                'tanggal_dikembalikan' => $request->tanggal_pengembalian
+            ]);
+        }
 
         return redirect()->route('pengembalian.index')->with('success', 'Data pengembalian berhasil diperbarui.');
     }
@@ -144,18 +180,27 @@ class PengembalianController extends Controller
     public function destroy(string $id)
     {
         $pengembalian = Pengembalian_Buku::findOrFail($id);
-        
-        // Kembalikan stok buku jika dihapus
+
+        // Ambil data peminjaman
         $peminjaman = Peminjaman_Buku::find($pengembalian->id_peminjaman);
+
         if ($peminjaman) {
+            // 🔥 KEMBALIKAN STATUS PEMINJAMAN
+            $peminjaman->update([
+                'status' => 'Dipinjam',
+                'tanggal_dikembalikan' => null
+            ]);
+
+            // Kurangi stok buku (karena buku dianggap belum dikembalikan lagi)
             $buku = \App\Models\Buku::find($peminjaman->id_buku);
             if ($buku) {
                 $buku->decrement('stok');
             }
         }
-        
+
+        // Hapus data pengembalian
         $pengembalian->delete();
 
-        return redirect()->route('pengembalian.index')->with('success', 'Data pengembalian berhasil dihapus.');
+        return redirect()->route('pengembalian.index')->with('success', 'Data pengembalian berhasil dihapus dan status peminjaman dikembalikan.');
     }
 }

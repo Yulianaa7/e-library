@@ -430,7 +430,7 @@
                 @forelse($peminjaman as $item)
                     @php
                         $today = \Carbon\Carbon::now();
-                        $tglKembali = \Carbon\Carbon::parse($item->tgl_kembali);
+                        $tglKembali = \Carbon\Carbon::parse($item->tanggal_kembali);
                         $hariTerlambat = $today->startOfDay()->diffInDays($tglKembali->startOfDay(), false);
                         $hariTerlambat = $hariTerlambat < 0 ? abs($hariTerlambat) : 0;
                         $denda = $hariTerlambat * 1500;
@@ -467,11 +467,11 @@
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Tgl Pinjam</span>
-                                <span class="info-value">{{ \Carbon\Carbon::parse($item->tgl_pinjam)->format('d M Y') }}</span>
+                                <span class="info-value">{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Tgl Harus Kembali</span>
-                                <span class="info-value">{{ \Carbon\Carbon::parse($item->tgl_kembali)->format('d M Y') }}</span>
+                                <span class="info-value">{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') }}</span>
                             </div>
                         </div>
 
@@ -514,7 +514,7 @@
 
                 @php
                     $today = \Carbon\Carbon::now();
-                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
+                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali);
                     $hariTerlambat = $today->startOfDay()->diffInDays($tglKembali->startOfDay(), false);
                     $hariTerlambat = $hariTerlambat < 0 ? abs($hariTerlambat) : 0;
                     $denda = $hariTerlambat * 1500;

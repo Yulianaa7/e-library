@@ -8,6 +8,7 @@ class Pengembalian_Buku extends Model
 {
     protected $table = 'pengembalian_buku';
     protected $primaryKey = 'id_pengembalian_buku';
+    public $timestamps = false;
     
     protected $fillable = [
         'id_peminjaman',  // ← Foreign key ke peminjaman_buku.id_peminjaman_buku
