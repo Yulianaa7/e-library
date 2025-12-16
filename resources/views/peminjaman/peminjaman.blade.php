@@ -573,32 +573,40 @@
                     </div>
 
                     @if($mode == 'edit')
-                        <div class="form-group">
-                            <label>Status <span class="required">*</span></label>
-                            <select name="status" 
-                                    class="@error('status') is-invalid @enderror" 
-                                    required>
-                                <option value="Dipinjam" {{ old('status', $peminjaman->status) == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
-                                <option value="Dikembalikan" {{ old('status', $peminjaman->status) == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
-                                <option value="Terlambat" {{ old('status', $peminjaman->status) == 'Terlambat' ? 'selected' : '' }}>Terlambat</option>
-                            </select>
-                            @error('status')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
 
-                        @if($peminjaman->status == 'Dikembalikan')
-                            <div class="form-group">
-                                <label>Tanggal Dikembalikan</label>
-                                <input type="date" name="tanggal_dikembalikan" 
-                                       class="@error('tanggal_dikembalikan') is-invalid @enderror"
-                                       value="{{ old('tanggal_dikembalikan', $peminjaman->tanggal_dikembalikan) }}">
-                                @error('tanggal_dikembalikan')
-                                    <span class="error-message">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        @endif
-                    @endif
+    <div class="form-group">
+        <label>Status <span class="required">*</span></label>
+        <select name="status"
+                class="@error('status') is-invalid @enderror"
+                required>
+            <option value="Dipinjam" {{ old('status', $peminjaman->status) == 'Dipinjam' ? 'selected' : '' }}>
+                Dipinjam
+            </option>
+            <option value="Dikembalikan" {{ old('status', $peminjaman->status) == 'Dikembalikan' ? 'selected' : '' }}>
+                Dikembalikan
+            </option>
+            <option value="Terlambat" {{ old('status', $peminjaman->status) == 'Terlambat' ? 'selected' : '' }}>
+                Terlambat
+            </option>
+        </select>
+        @error('status')
+            <span class="error-message">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <div class="form-group">
+        <label>Tanggal Dikembalikan</label>
+        <input type="date"
+               name="tanggal_dikembalikan"
+               class="@error('tanggal_dikembalikan') is-invalid @enderror"
+               value="{{ old('tanggal_dikembalikan', $peminjaman->tanggal_dikembalikan ?? date('Y-m-d')) }}">
+        @error('tanggal_dikembalikan')
+            <span class="error-message">{{ $message }}</span>
+        @enderror
+    </div>
+
+@endif
+
 
                     <div class="form-actions">
                         <button type="submit" class="btn-submit">
@@ -610,7 +618,7 @@
                     </div>
                 </form>
             </div>
-        @endif
+        <!-- @endif -->
     </div>
 </body>
 

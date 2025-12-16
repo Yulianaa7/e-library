@@ -21,4 +21,3 @@ Route::resource('siswa', SiswaController::class);
 Route::resource('kelas', KelasController::class);
 Route::resource('peminjaman', PeminjamanController::class);
 Route::resource('pengembalian', PengembalianController::class);
-Route::resource('detail_peminjaman', DetailPeminjamanController::class);

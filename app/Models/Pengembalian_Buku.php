@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Pengembalian_Buku extends Model
 {
     protected $table = 'pengembalian_buku';
-    public $timestamps = false;
+    protected $primaryKey = 'id_pengembalian_buku';
+    
     protected $fillable = [
+        'id_peminjaman',  // ← Foreign key ke peminjaman_buku.id_peminjaman_buku
         'tanggal_pengembalian',
         'denda',
-        'id_peminjaman_buku',
     ];
+    
+    public function peminjaman()
+    {
+        return $this->belongsTo(Peminjaman_Buku::class, 'id_peminjaman', 'id_peminjaman');
+    }
 }
