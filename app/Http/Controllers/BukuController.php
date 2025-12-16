@@ -21,8 +21,9 @@ class BukuController extends Controller
         }
 
         $buku = $buku->get();
+        $mode = 'index';
 
-        return view('buku.index', compact('buku'));
+        return view('buku.buku', compact('buku', 'mode'));
     }
 
     /**
@@ -30,7 +31,10 @@ class BukuController extends Controller
      */
     public function create()
     {
-        return view('buku.create');
+        $mode = 'create';
+        $buku = (object)[]; // Empty object untuk form create
+
+        return view('buku.buku', compact('mode', 'buku'));
     }
 
     /**
@@ -67,7 +71,9 @@ class BukuController extends Controller
     public function edit(string $id)
     {
         $buku = Buku::findOrFail($id);
-        return view('buku.edit', compact('buku'));
+        $mode = 'edit';
+
+        return view('buku.buku', compact('buku', 'mode'));
     }
 
     /**

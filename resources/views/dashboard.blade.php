@@ -216,7 +216,7 @@
                 <p>Kelola data buku perpustakaan</p>
             </a>
 
-            <!-- <a href="{{ route('siswa.index') }}" class="menu-card">
+            <a href="{{ route('siswa.index') }}" class="menu-card">
                 <div class="menu-icon"><i class="fa-solid fa-user-graduate"></i></div>
                 <h3>Manajemen Siswa</h3>
                 <p>Kelola data siswa dan anggota</p>
@@ -238,7 +238,7 @@
                 <div class="menu-icon"><i class="fa-solid fa-arrow-rotate-left"></i></div>
                 <h3>Pengembalian Buku</h3>
                 <p>Proses pengembalian dan denda</p>
-            </a> -->
+            </a>
         </div>
     </div>
 </body>
