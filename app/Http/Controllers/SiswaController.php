@@ -8,37 +8,29 @@ use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $siswa = Siswa::join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
                       ->select('siswa.*', 'kelas.nama_kelas');
 
         if ($request->search) {
-            $siswa->where('siswa.nama_siswa', 'like', '%' . $request->search . '%')
-                  ->orWhere('siswa.alamat', 'like', '%' . $request->search . '%')
-                  ->orWhere('kelas.nama_kelas', 'like', '%' . $request->search . '%');
+            $siswa->where('siswa.nama_siswa', 'like', '%' . $request->search . '%');
         }
 
         $siswa = $siswa->get();
+        $mode = 'index';
 
-        return view('siswa.index', compact('siswa'));
+        return view('siswa.siswa', compact('siswa', 'mode')); // ✅ siswa.siswa dengan mode
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        $mode = 'create';
+        $siswa = (object)[];
         $kelas = Kelas::all();
-        return view('siswa.create', compact('kelas'));
+        return view('siswa.siswa', compact('mode', 'siswa', 'kelas')); // ✅ siswa.siswa dengan mode
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -53,9 +45,6 @@ class SiswaController extends Controller
         return redirect()->route('siswa.index')->with('success', 'Siswa berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $siswa = Siswa::join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
@@ -66,19 +55,14 @@ class SiswaController extends Controller
         return view('siswa.show', compact('siswa'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $siswa = Siswa::findOrFail($id);
+        $mode = 'edit';
         $kelas = Kelas::all();
-        return view('siswa.edit', compact('siswa', 'kelas'));
+        return view('siswa.siswa', compact('siswa', 'mode', 'kelas')); // ✅ siswa.siswa dengan mode
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -94,9 +78,6 @@ class SiswaController extends Controller
         return redirect()->route('siswa.index')->with('success', 'Siswa berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $siswa = Siswa::findOrFail($id);
