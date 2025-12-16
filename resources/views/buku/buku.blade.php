@@ -134,13 +134,14 @@
             border: none;
             border-radius: 10px;
             font-weight: 600;
+            cursor: pointer;
         }
 
         .table-container {
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
+            overflow-x: auto;
         }
 
         table {
@@ -157,6 +158,7 @@
             padding: 18px;
             text-align: left;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         td {
@@ -178,6 +180,7 @@
             text-decoration: none;
             display: inline-block;
             font-size: 0.9em;
+            cursor: pointer;
         }
 
         .btn-edit {
@@ -195,6 +198,7 @@
             border-radius: 20px;
             font-size: 0.85em;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .stock-available {
@@ -210,6 +214,23 @@
         .stock-empty {
             background: #ffebee;
             color: #c62828;
+        }
+
+        .desc-cell {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: help;
+        }
+
+        .desc-cell:hover {
+            overflow: visible;
+            white-space: normal;
+            word-wrap: break-word;
+            background: #f8f9ff;
+            z-index: 1;
+            position: relative;
         }
 
         /* FORM STYLES */
@@ -261,7 +282,8 @@
         }
 
         .form-group input.is-invalid,
-        .form-group select.is-invalid {
+        .form-group select.is-invalid,
+        .form-group textarea.is-invalid {
             border-color: #f44336;
         }
 
@@ -287,6 +309,7 @@
             border-radius: 10px;
             font-weight: 600;
             font-size: 1em;
+            cursor: pointer;
         }
 
         .btn-cancel {
@@ -306,6 +329,10 @@
         @media (max-width: 768px) {
             .container {
                 padding: 0 20px;
+            }
+
+            .desc-cell {
+                max-width: 150px;
             }
         }
     </style>
@@ -364,6 +391,7 @@
                             <th>Kategori</th>
                             <th>Tahun</th>
                             <th>Stok</th>
+                            <th>Deskripsi</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -385,7 +413,10 @@
                                         <span class="badge-stock stock-available">{{ $item->stok }}</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="desc-cell" title="{{ $item->deskripsi ?? 'Tidak ada deskripsi' }}">
+                                    {{ $item->deskripsi ? Str::limit($item->deskripsi, 50) : '-' }}
+                                </td>
+                                <td style="white-space: nowrap;">
                                     <a href="{{ route('buku.edit', $item->id_buku) }}" class="btn-action btn-edit">
                                         <i class="fa-solid fa-edit"></i> Edit
                                     </a>
@@ -403,7 +434,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" style="text-align: center; padding: 40px;">Belum ada data buku</td>
+                                <td colspan="9" style="text-align: center; padding: 40px;">Belum ada data buku</td>
                             </tr>
                         @endforelse
                     </tbody>
