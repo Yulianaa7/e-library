@@ -7,85 +7,73 @@ use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $kelas = Kelas::query();
+        $search = $request->input('search');
+        
+        $kelas = Kelas::when($search, function($query, $search) {
+            return $query->where('nama_kelas', 'like', "%{$search}%")
+                        ->orWhere('wali_kelas', 'like', "%{$search}%");
+        })->get();
 
-        if ($request->search) {
-            $kelas->where('nama_kelas', 'like', '%' . $request->search . '%')
-                  ->orWhere('wali_kelas', 'like', '%' . $request->search . '%');
-        }
-
-        $kelas = $kelas->get();
-
-        return view('kelas.index', compact('kelas'));
+        return view('kelas.kelas', [
+            'mode' => 'index',
+            'kelas' => $kelas
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('kelas.create');
+        return view('kelas.kelas', [
+            'mode' => 'create',
+            'kelas' => new Kelas()
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_kelas' => 'required|string|max:100',
+        $validated = $request->validate([
+            'nama_kelas' => 'required|string|max:255',
             'wali_kelas' => 'required|string|max:255',
         ]);
 
-        Kelas::create($request->all());
-        return redirect()->route('kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
+        Kelas::create($validated);
+
+        return redirect()->route('kelas.index')
+            ->with('success', 'Kelas berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
         $kelas = Kelas::findOrFail($id);
-        return view('kelas.show', compact('kelas'));
+        
+        return view('kelas.kelas', [
+            'mode' => 'edit',
+            'kelas' => $kelas
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
         $kelas = Kelas::findOrFail($id);
-        return view('kelas.edit', compact('kelas'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'nama_kelas' => 'required|string|max:100',
+        
+        $validated = $request->validate([
+            'nama_kelas' => 'required|string|max:255',
             'wali_kelas' => 'required|string|max:255',
         ]);
 
-        $kelas = Kelas::findOrFail($id);
-        $kelas->update($request->all());
-        return redirect()->route('kelas.index')->with('success', 'Kelas berhasil diperbarui.');
+        $kelas->update($validated);
+
+        return redirect()->route('kelas.index')
+            ->with('success', 'Kelas berhasil diupdate!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $kelas = Kelas::findOrFail($id);
         $kelas->delete();
-        return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus.');
+
+        return redirect()->route('kelas.index')
+            ->with('success', 'Kelas berhasil dihapus!');
     }
 }
