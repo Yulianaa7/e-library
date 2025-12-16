@@ -15,10 +15,10 @@ return new class extends Migration
             $table->bigIncrements('id_detail');
             $table->integer('qty');
             $table->unsignedBigInteger('id_buku');
-            $table->unsignedBigInteger('id_peminjaman_buku');
+            $table->unsignedBigInteger('id_peminjaman');
 
             $table->foreign('id_buku')->references('id_buku')->on('buku');
-            $table->foreign('id_peminjaman_buku')->references('id_peminjaman_buku')->on('peminjaman_buku');
+            $table->foreign('id_peminjaman')->references('id_peminjaman')->on('peminjaman_buku');
         });
     }
 

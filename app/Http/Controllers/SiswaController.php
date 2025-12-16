@@ -20,7 +20,7 @@ class SiswaController extends Controller
         $siswa = $siswa->get();
         $mode = 'index';
 
-        return view('siswa.siswa', compact('siswa', 'mode')); // ✅ siswa.siswa dengan mode
+        return view('siswa.siswa', compact('siswa', 'mode'));
     }
 
     public function create()
@@ -28,7 +28,7 @@ class SiswaController extends Controller
         $mode = 'create';
         $siswa = (object)[];
         $kelas = Kelas::all();
-        return view('siswa.siswa', compact('mode', 'siswa', 'kelas')); // ✅ siswa.siswa dengan mode
+        return view('siswa.siswa', compact('mode', 'siswa', 'kelas'));
     }
 
     public function store(Request $request)
@@ -36,7 +36,7 @@ class SiswaController extends Controller
         $request->validate([
             'nama_siswa' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'gender' => 'required|in:Laki-laki,Perempuan',
+            'gender' => 'required|in:L,P',  // ← UBAH INI
             'alamat' => 'required|string',
             'id_kelas' => 'required|exists:kelas,id_kelas',
         ]);
@@ -60,7 +60,7 @@ class SiswaController extends Controller
         $siswa = Siswa::findOrFail($id);
         $mode = 'edit';
         $kelas = Kelas::all();
-        return view('siswa.siswa', compact('siswa', 'mode', 'kelas')); // ✅ siswa.siswa dengan mode
+        return view('siswa.siswa', compact('siswa', 'mode', 'kelas'));
     }
 
     public function update(Request $request, string $id)
@@ -68,7 +68,7 @@ class SiswaController extends Controller
         $request->validate([
             'nama_siswa' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'gender' => 'required|in:Laki-laki,Perempuan',
+            'gender' => 'required|in:L,P',  // ← UBAH INI
             'alamat' => 'required|string',
             'id_kelas' => 'required|exists:kelas,id_kelas',
         ]);

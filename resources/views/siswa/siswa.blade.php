@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $mode == 'index' ? 'Manajemen Siswa' : ($mode == 'create' ? 'Tambah Siswa' : 'Edit Siswa') }} - Sistem Perpustakaan</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -25,7 +27,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar h1 {
@@ -37,7 +39,7 @@
 
         .btn-back {
             padding: 10px 25px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border: 2px solid white;
             color: white;
             border-radius: 10px;
@@ -107,7 +109,7 @@
             background: white;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             margin-bottom: 25px;
         }
 
@@ -135,35 +137,59 @@
             cursor: pointer;
         }
 
-        .cards-grid {
+        .siswa-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 25px;
         }
 
-        .student-card {
+        .siswa-card {
             background: white;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .student-card:hover {
+        .siswa-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .siswa-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
         }
 
-        .student-header {
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .siswa-header {
             display: flex;
             align-items: center;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 2px solid #f0f0f0;
         }
 
-        .student-avatar {
+        .siswa-avatar {
             width: 70px;
             height: 70px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -171,59 +197,75 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2em;
+            font-size: 1.8em;
             color: white;
             font-weight: 600;
         }
 
-        .student-info h3 {
+        .siswa-title {
+            flex: 1;
+        }
+
+        .siswa-title h3 {
             font-size: 1.3em;
             color: #333;
             margin-bottom: 5px;
         }
 
-        .student-nis {
+        .siswa-subtitle {
             color: #666;
-            font-size: 0.95em;
+            font-size: 0.9em;
         }
 
-        .student-details {
+        .siswa-info {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
         }
 
-        .detail-row {
+        .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f5f5f5;
+            align-items: center;
+            padding: 8px 0;
         }
 
-        .detail-label {
+        .info-label {
             color: #666;
+            font-size: 0.9em;
             font-weight: 500;
         }
 
-        .detail-value {
+        .info-text {
             color: #333;
             font-weight: 600;
+            text-align: right;
         }
 
-        .card-actions {
+        .siswa-actions {
             display: flex;
             gap: 10px;
         }
 
+        .siswa-actions form {
+            flex: 1;
+            margin: 0;
+        }
+
         .btn-action {
             flex: 1;
-            padding: 10px;
+            padding: 12px 15px;
             border: none;
             border-radius: 8px;
             font-weight: 500;
             transition: all 0.3s;
             text-decoration: none;
-            text-align: center;
             display: inline-block;
+            font-size: 0.9em;
             cursor: pointer;
+            text-align: center;
+            width: 100%;
         }
 
         .btn-edit {
@@ -268,7 +310,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -278,15 +321,22 @@
             transition: all 0.3s;
         }
 
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-group input.is-invalid,
-        .form-group select.is-invalid {
+        .form-group select.is-invalid,
+        .form-group textarea.is-invalid {
             border-color: #f44336;
         }
 
@@ -334,12 +384,19 @@
                 padding: 0 20px;
             }
 
-            .cards-grid {
+            .header-section {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .siswa-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <h1>
@@ -352,7 +409,7 @@
                 Edit Siswa
             @endif
         </h1>
-        <a href="{{ $mode == 'index' ? route('dashboard') : route('siswa.index') }}" class="btn-back">
+        <a href="{{ $mode == 'index' ? '/' : route('siswa.index') }}" class="btn-back">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </nav>
@@ -361,7 +418,7 @@
         @if($mode == 'index')
             {{-- INDEX MODE --}}
             <div class="header-section">
-                <h2 class="page-title">Data Siswa Perpustakaan</h2>
+                <h2 class="page-title">Data Siswa</h2>
                 <a href="{{ route('siswa.create') }}" class="btn-add">
                     <i class="fa-solid fa-plus"></i> Tambah Siswa
                 </a>
@@ -375,59 +432,57 @@
 
             <div class="search-box">
                 <form action="{{ route('siswa.index') }}" method="GET" class="search-form">
-                    <input type="text" name="search" placeholder="Cari siswa berdasarkan nama atau NIS..." value="{{ request('search') }}">
+                    <input type="text" name="search" placeholder="Cari nama siswa..." value="{{ request('search') }}">
                     <button type="submit" class="btn-search">
                         <i class="fa-solid fa-search"></i> Cari
                     </button>
                 </form>
             </div>
 
-            <div class="cards-grid">
-                @forelse($siswa as $item)
-                    <div class="student-card">
-                        <div class="student-header">
-                            <div class="student-avatar">
-                                {{ strtoupper(substr($item->nama_siswa, 0, 2)) }}
+            <div class="siswa-grid">
+                @forelse($siswa as $s)
+                    <div class="siswa-card">
+                        <div class="siswa-header">
+                            <div class="siswa-avatar">
+                                {{ strtoupper(substr($s->nama_siswa, 0, 2)) }}
                             </div>
-                            <div class="student-info">
-                                <h3>{{ $item->nama_siswa }}</h3>
-                                <div class="student-nis">{{ $item->tanggal_lahir }}</div>
-                            </div>
-                        </div>
-                        <div class="student-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Kelas</span>
-                                <span class="detail-value">{{ $item->nama_kelas }}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Jenis Kelamin</span>
-                                <span class="detail-value">{{ $item->gender }}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Alamat</span>
-                                <span class="detail-value">{{ Str::limit($item->alamat, 30) }}</span>
+                            <div class="siswa-title">
+                                <h3>{{ $s->nama_siswa }}</h3>
+                                <div class="siswa-subtitle">{{ $s->tanggal_lahir }}</div>
                             </div>
                         </div>
-                        <div class="card-actions">
-                            <a href="{{ route('siswa.edit', $item->id_siswa) }}" class="btn-action btn-edit">
+                        <div class="siswa-info">
+                            <div class="info-row">
+                                <span class="info-label">Kelas</span>
+                                <span class="info-text">{{ $s->nama_kelas }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Jenis Kelamin</span>
+                                <span class="info-text">{{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Alamat</span>
+                                <span class="info-text">{{ $s->alamat }}</span>
+                            </div>
+                        </div>
+                        <div class="siswa-actions">
+                            <a href="{{ route('siswa.edit', $s->id_siswa) }}" class="btn-action btn-edit">
                                 <i class="fa-solid fa-edit"></i> Edit
                             </a>
-                            <form action="{{ route('siswa.destroy', $item->id_siswa) }}" 
+                            <form action="{{ route('siswa.destroy', $s->id_siswa) }}" 
                                   method="POST" 
-                                  style="flex: 1; display: inline;"
-                                  onsubmit="return confirm('Yakin hapus?')">
+                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus siswa ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn-action btn-delete" style="width: 100%;">
+                                <button type="submit" class="btn-action btn-delete">
                                     <i class="fa-solid fa-trash"></i> Hapus
                                 </button>
                             </form>
                         </div>
                     </div>
                 @empty
-                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
-                        <i class="fa-solid fa-user-graduate" style="font-size: 4em; margin-bottom: 20px; opacity: 0.3; display: block;"></i>
-                        <p>Belum ada data siswa</p>
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                        <p style="color: #666; font-size: 1.2em;">Belum ada data siswa</p>
                     </div>
                 @endforelse
             </div>
@@ -444,10 +499,12 @@
                     @endif
 
                     <div class="form-group">
-                        <label>Nama Lengkap <span class="required">*</span></label>
+                        <label>Nama Siswa <span class="required">*</span></label>
                         <input type="text" name="nama_siswa" 
                                class="@error('nama_siswa') is-invalid @enderror"
-                               value="{{ old('nama_siswa', $siswa->nama_siswa ?? '') }}" required>
+                               value="{{ old('nama_siswa', $siswa->nama_siswa ?? '') }}" 
+                               placeholder="Contoh: Budi Santoso"
+                               required>
                         @error('nama_siswa')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
@@ -457,7 +514,8 @@
                         <label>Tanggal Lahir <span class="required">*</span></label>
                         <input type="date" name="tanggal_lahir" 
                                class="@error('tanggal_lahir') is-invalid @enderror"
-                               value="{{ old('tanggal_lahir', $siswa->tanggal_lahir ?? '') }}" required>
+                               value="{{ old('tanggal_lahir', $siswa->tanggal_lahir ?? '') }}" 
+                               required>
                         @error('tanggal_lahir')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
@@ -465,10 +523,16 @@
 
                     <div class="form-group">
                         <label>Jenis Kelamin <span class="required">*</span></label>
-                        <select name="gender" class="@error('gender') is-invalid @enderror" required>
+                        <select name="gender" 
+                                class="@error('gender') is-invalid @enderror" 
+                                required>
                             <option value="">Pilih Jenis Kelamin</option>
-                            <option value="Laki-laki" {{ old('gender', $siswa->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="Perempuan" {{ old('gender', $siswa->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            <option value="L" {{ old('gender', $siswa->gender ?? '') == 'L' ? 'selected' : '' }}>
+                                Laki-laki
+                            </option>
+                            <option value="P" {{ old('gender', $siswa->gender ?? '') == 'P' ? 'selected' : '' }}>
+                                Perempuan
+                            </option>
                         </select>
                         @error('gender')
                             <span class="error-message">{{ $message }}</span>
@@ -477,10 +541,13 @@
 
                     <div class="form-group">
                         <label>Kelas <span class="required">*</span></label>
-                        <select name="id_kelas" class="@error('id_kelas') is-invalid @enderror" required>
+                        <select name="id_kelas" 
+                                class="@error('id_kelas') is-invalid @enderror" 
+                                required>
                             <option value="">Pilih Kelas</option>
                             @foreach($kelas as $k)
-                                <option value="{{ $k->id_kelas }}" {{ old('id_kelas', $siswa->id_kelas ?? '') == $k->id_kelas ? 'selected' : '' }}>
+                                <option value="{{ $k->id_kelas }}" 
+                                    {{ old('id_kelas', $siswa->id_kelas ?? '') == $k->id_kelas ? 'selected' : '' }}>
                                     {{ $k->nama_kelas }}
                                 </option>
                             @endforeach
@@ -492,9 +559,10 @@
 
                     <div class="form-group">
                         <label>Alamat <span class="required">*</span></label>
-                        <input type="text" name="alamat" 
-                               class="@error('alamat') is-invalid @enderror"
-                               value="{{ old('alamat', $siswa->alamat ?? '') }}" required>
+                        <textarea name="alamat" 
+                                  class="@error('alamat') is-invalid @enderror"
+                                  placeholder="Contoh: Jl. Merdeka No. 123, Jakarta"
+                                  required>{{ old('alamat', $siswa->alamat ?? '') }}</textarea>
                         @error('alamat')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
@@ -513,4 +581,5 @@
         @endif
     </div>
 </body>
+
 </html>

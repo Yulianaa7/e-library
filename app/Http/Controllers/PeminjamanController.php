@@ -4,121 +4,137 @@ namespace App\Http\Controllers;
 
 use App\Models\Peminjaman_Buku;
 use App\Models\Siswa;
-use App\Models\Kelas;
 use App\Models\Buku;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class PeminjamanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $peminjaman = Peminjaman_Buku::join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
-                                     ->join('kelas', 'kelas.id_kelas', '=', 'peminjaman_buku.id_kelas')
-                                     ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas');
+        $search = $request->input('search');
 
-        if ($request->search) {
-            $peminjaman->where('siswa.nama_siswa', 'like', '%' . $request->search . '%')
-                       ->orWhere('kelas.nama_kelas', 'like', '%' . $request->search . '%')
-                       ->orWhere('peminjaman_buku.tanggal_pinjam', 'like', '%' . $request->search . '%');
-        }
+        $peminjaman = Peminjaman_Buku::with(['siswa.kelas', 'buku'])
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('siswa', function ($q) use ($search) {
+                    $q->where('nama_siswa', 'like', "%{$search}%");
+                })->orWhereHas('buku', function ($q) use ($search) {
+                    $q->where('nama_buku', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('tanggal_pinjam', 'desc')  // ← UBAH INI (ganti created_at dengan tanggal_pinjam)
+            ->get();
 
-        $peminjaman = $peminjaman->get();
-
-        return view('peminjaman.index', compact('peminjaman'));
+        return view('peminjaman.peminjaman', [
+            'mode' => 'index',
+            'peminjaman' => $peminjaman
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $siswa = Siswa::all();
-        $kelas = Kelas::all();
-        $buku = Buku::where('stok', '>', 0)->get(); // Hanya buku yang stoknya > 0
-        
-        return view('peminjaman.create', compact('siswa', 'kelas', 'buku'));
+        $siswa = Siswa::with('kelas')->get();
+        $buku = Buku::where('stok', '>', 0)->get();
+
+        return view('peminjaman.peminjaman', [
+            'mode' => 'create',
+            'peminjaman' => new Peminjaman_Buku(),
+            'siswa' => $siswa,
+            'buku' => $buku
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'id_siswa' => 'required|exists:siswa,id_siswa',
-            'id_kelas' => 'required|exists:kelas,id_kelas',
-            'tanggal_pinjam' => 'nullable|date',
-            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
-        ]);
-
-        // Set tanggal pinjam otomatis jika tidak diisi
-        $data = $request->all();
-        if (empty($data['tanggal_pinjam'])) {
-            $data['tanggal_pinjam'] = Carbon::now()->format('Y-m-d');
-        }
-
-        Peminjaman_Buku::create($data);
-        
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil ditambahkan.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $peminjaman = Peminjaman_Buku::join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
-                                     ->join('kelas', 'kelas.id_kelas', '=', 'peminjaman_buku.id_kelas')
-                                     ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas')
-                                     ->where('peminjaman_buku.id_peminjaman_buku', $id)
-                                     ->firstOrFail();
-        
-        return view('peminjaman.show', compact('peminjaman'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $peminjaman = Peminjaman_Buku::findOrFail($id);
-        $siswa = Siswa::all();
-        $kelas = Kelas::all();
-        $buku = Buku::all();
-        
-        return view('peminjaman.edit', compact('peminjaman', 'siswa', 'kelas', 'buku'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'id_siswa' => 'required|exists:siswa,id_siswa',
-            'id_kelas' => 'required|exists:kelas,id_kelas',
+            'id_buku' => 'required|exists:buku,id_buku',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
         ]);
 
-        $peminjaman = Peminjaman_Buku::findOrFail($id);
-        $peminjaman->update($request->all());
-        
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil diperbarui.');
+        // Tambahan data sistem
+        $validated['status'] = 'Dipinjam';
+        $validated['tanggal_dikembalikan'] = null;
+
+        // Simpan peminjaman
+        Peminjaman_Buku::create($validated);
+
+        // Kurangi stok buku
+        Buku::where('id_buku', $validated['id_buku'])->decrement('stok');
+
+        return redirect()
+            ->route('peminjaman.index')
+            ->with('success', 'Peminjaman berhasil ditambahkan');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+    public function show($id)
+    {
+        $peminjaman = Peminjaman_Buku::with(['siswa.kelas', 'buku'])->findOrFail($id);
+
+        return view('peminjaman.peminjaman', [
+            'mode' => 'show',
+            'peminjaman' => $peminjaman
+        ]);
+    }
+
+    public function edit($id)
     {
         $peminjaman = Peminjaman_Buku::findOrFail($id);
+        $siswa = Siswa::with('kelas')->get();
+        $buku = Buku::all(); // Tampilkan semua buku saat edit
+
+        return view('peminjaman.peminjaman', [
+            'mode' => 'edit',
+            'peminjaman' => $peminjaman,
+            'siswa' => $siswa,
+            'buku' => $buku
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $peminjaman = Peminjaman_Buku::findOrFail($id);
+
+        $validated = $request->validate([
+            'id_siswa' => 'required|exists:siswa,id_siswa',
+            'id_buku' => 'required|exists:buku,id_buku',
+            'tanggal_pinjam' => 'required|date',
+            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+            'status' => 'required|in:Dipinjam,Dikembalikan,Terlambat',
+            'tanggal_dikembalikan' => 'nullable|date',
+        ]);
+
+        // Jika status berubah menjadi Dikembalikan, kembalikan stok
+        if ($request->status == 'Dikembalikan' && $peminjaman->status != 'Dikembalikan') {
+            $buku = Buku::find($peminjaman->id_buku);
+            $buku->increment('stok');
+
+            if (!$validated['tanggal_dikembalikan']) {
+                $validated['tanggal_dikembalikan'] = Carbon::now()->format('Y-m-d');
+            }
+        }
+
+        $peminjaman->update($validated);
+
+        return redirect()->route('peminjaman.index')
+            ->with('success', 'Peminjaman berhasil diupdate!');
+    }
+
+    public function destroy($id)
+    {
+        $peminjaman = Peminjaman_Buku::findOrFail($id);
+
+        // Kembalikan stok jika belum dikembalikan
+        if ($peminjaman->status != 'Dikembalikan') {
+            $buku = Buku::find($peminjaman->id_buku);
+            $buku->increment('stok');
+        }
+
         $peminjaman->delete();
-        
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil dihapus.');
+
+        return redirect()->route('peminjaman.index')
+            ->with('success', 'Peminjaman berhasil dihapus!');
     }
 }
