@@ -116,15 +116,21 @@
         .search-form {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .search-box input {
             flex: 1;
+            min-width: 200px;
             padding: 12px 20px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1em;
             font-family: 'Poppins', sans-serif;
+        }
+
+        .search-box input[type="date"] {
+            min-width: 180px;
         }
 
         .btn-search {
@@ -361,10 +367,17 @@
 
             <div class="search-box">
                 <form action="{{ route('peminjaman.index') }}" method="GET" class="search-form">
-                    <input type="text" name="search" placeholder="Cari peminjaman..." value="{{ request('search') }}">
+                    <input type="text" name="search" placeholder="Cari peminjaman..." value="{{ request('search') }}" style="flex: 2;">
+                    <input type="date" name="tanggal_dari" placeholder="Dari Tanggal" value="{{ request('tanggal_dari') }}" style="flex: 1;">
+                    <input type="date" name="tanggal_sampai" placeholder="Sampai Tanggal" value="{{ request('tanggal_sampai') }}" style="flex: 1;">
                     <button type="submit" class="btn-search">
-                        <i class="fa-solid fa-search"></i> Cari
+                        <i class="fa-solid fa-search"></i> Filter
                     </button>
+                    @if(request('search') || request('tanggal_dari') || request('tanggal_sampai'))
+                        <a href="{{ route('peminjaman.index') }}" class="btn-search" style="background: #6c757d; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-times"></i> Reset
+                        </a>
+                    @endif
                 </form>
             </div>
 
@@ -384,6 +397,25 @@
                     </thead>
                     <tbody>
                         @forelse($peminjaman as $index => $p)
+                            @php
+                                // Hitung status otomatis berdasarkan tanggal
+                                $today = \Carbon\Carbon::now()->startOfDay();
+                                $tglKembali = \Carbon\Carbon::parse($p->tanggal_kembali)->startOfDay();
+                                
+                                $statusDisplay = $p->status;
+                                $statusClass = 'status-dipinjam';
+                                
+                                if ($p->status == 'Dikembalikan') {
+                                    $statusDisplay = 'Dikembalikan';
+                                    $statusClass = 'status-dikembalikan';
+                                } elseif ($today->gt($tglKembali)) {
+                                    $statusDisplay = 'Terlambat';
+                                    $statusClass = 'status-terlambat';
+                                } else {
+                                    $statusDisplay = 'Dipinjam';
+                                    $statusClass = 'status-dipinjam';
+                                }
+                            @endphp
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $p->siswa->nama_siswa }}</td>
@@ -392,13 +424,7 @@
                                 <td>{{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d M Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($p->tanggal_kembali)->format('d M Y') }}</td>
                                 <td>
-                                    @if($p->status == 'Dipinjam')
-                                        <span class="badge-status status-dipinjam">Dipinjam</span>
-                                    @elseif($p->status == 'Dikembalikan')
-                                        <span class="badge-status status-dikembalikan">Dikembalikan</span>
-                                    @else
-                                        <span class="badge-status status-terlambat">Terlambat</span>
-                                    @endif
+                                    <span class="badge-status {{ $statusClass }}">{{ $statusDisplay }}</span>
                                 </td>
                                 <td style="white-space: nowrap;">
                                     <a href="{{ route('peminjaman.show', $p->id_peminjaman) }}" class="btn-action btn-detail">
@@ -433,6 +459,16 @@
             <div class="form-card">
                 <h2 class="page-title">Detail Peminjaman</h2>
 
+                @php
+                    $today = \Carbon\Carbon::now()->startOfDay();
+                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->startOfDay();
+                    
+                    $statusDisplay = $peminjaman->status;
+                    if ($peminjaman->status != 'Dikembalikan' && $today->gt($tglKembali)) {
+                        $statusDisplay = 'Terlambat';
+                    }
+                @endphp
+
                 <div style="background: #f8f9ff; padding: 30px; border-radius: 10px; margin-top: 30px;">
                     <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
                         <span style="color: #666; font-weight: 500;">ID Peminjaman</span>
@@ -466,19 +502,15 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 15px 0;">
                         <span style="color: #666; font-weight: 500;">Status</span>
-                        <span style="color: #333; font-weight: 600;">{{ $peminjaman->status }}</span>
+                        <span style="color: #333; font-weight: 600;">{{ $statusDisplay }}</span>
                     </div>
 
                     @php
                         $hariTerlambat = 0;
                         $denda = 0;
-                        if ($peminjaman->status != 'Dikembalikan') {
-                            $today = \Carbon\Carbon::now();
-                            $dueDate = \Carbon\Carbon::parse($peminjaman->tanggal_kembali);
-                            if ($today->gt($dueDate)) {
-                                $hariTerlambat = $today->diffInDays($dueDate);
-                                $denda = $hariTerlambat * 500;
-                            }
+                        if ($peminjaman->status != 'Dikembalikan' && $today->gt($tglKembali)) {
+                            $hariTerlambat = $today->diffInDays($tglKembali);
+                            $denda = $hariTerlambat * 1500;
                         }
                     @endphp
 
@@ -573,40 +605,37 @@
                     </div>
 
                     @if($mode == 'edit')
+                        <div class="form-group">
+                            <label>Status <span class="required">*</span></label>
+                            <select name="status"
+                                    class="@error('status') is-invalid @enderror"
+                                    required>
+                                <option value="Dipinjam" {{ old('status', $peminjaman->status) == 'Dipinjam' ? 'selected' : '' }}>
+                                    Dipinjam
+                                </option>
+                                <option value="Dikembalikan" {{ old('status', $peminjaman->status) == 'Dikembalikan' ? 'selected' : '' }}>
+                                    Dikembalikan
+                                </option>
+                                <option value="Terlambat" {{ old('status', $peminjaman->status) == 'Terlambat' ? 'selected' : '' }}>
+                                    Terlambat
+                                </option>
+                            </select>
+                            @error('status')
+                                <span class="error-message">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-    <div class="form-group">
-        <label>Status <span class="required">*</span></label>
-        <select name="status"
-                class="@error('status') is-invalid @enderror"
-                required>
-            <option value="Dipinjam" {{ old('status', $peminjaman->status) == 'Dipinjam' ? 'selected' : '' }}>
-                Dipinjam
-            </option>
-            <option value="Dikembalikan" {{ old('status', $peminjaman->status) == 'Dikembalikan' ? 'selected' : '' }}>
-                Dikembalikan
-            </option>
-            <option value="Terlambat" {{ old('status', $peminjaman->status) == 'Terlambat' ? 'selected' : '' }}>
-                Terlambat
-            </option>
-        </select>
-        @error('status')
-            <span class="error-message">{{ $message }}</span>
-        @enderror
-    </div>
-
-    <div class="form-group">
-        <label>Tanggal Dikembalikan</label>
-        <input type="date"
-               name="tanggal_dikembalikan"
-               class="@error('tanggal_dikembalikan') is-invalid @enderror"
-               value="{{ old('tanggal_dikembalikan', $peminjaman->tanggal_dikembalikan ?? date('Y-m-d')) }}">
-        @error('tanggal_dikembalikan')
-            <span class="error-message">{{ $message }}</span>
-        @enderror
-    </div>
-
-@endif
-
+                        <div class="form-group">
+                            <label>Tanggal Dikembalikan</label>
+                            <input type="date"
+                                   name="tanggal_dikembalikan"
+                                   class="@error('tanggal_dikembalikan') is-invalid @enderror"
+                                   value="{{ old('tanggal_dikembalikan', $peminjaman->tanggal_dikembalikan) }}">
+                            @error('tanggal_dikembalikan')
+                                <span class="error-message">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @endif
 
                     <div class="form-actions">
                         <button type="submit" class="btn-submit">
@@ -618,7 +647,7 @@
                     </div>
                 </form>
             </div>
-        <!-- @endif -->
+        @endif
     </div>
 </body>
 

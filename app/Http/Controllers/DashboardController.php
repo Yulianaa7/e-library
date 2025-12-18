@@ -12,13 +12,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Hitung statistik (gunakan 0 jika model belum ada)
+        // Hitung statistik dengan error handling
         $totalBooks = 0;
         $totalStudents = 0;
         $activeBorrows = 0;
         $overdueBooks = 0;
 
-        // Jika model sudah ada, uncomment code di bawah:
         try {
             $totalBooks = Buku::count();
         } catch (\Exception $e) {
@@ -32,14 +31,17 @@ class DashboardController extends Controller
         }
 
         try {
-            $activeBorrows = Peminjaman_Buku::where('status', 'dipinjam')->count();
+            // Hitung peminjaman yang sedang dipinjam (status bukan 'Dikembalikan')
+            $activeBorrows = Peminjaman_Buku::where('status', '!=', 'Dikembalikan')->count();
         } catch (\Exception $e) {
             $activeBorrows = 0;
         }
 
         try {
-            $overdueBooks = Peminjaman_Buku::where('status', 'dipinjam')
-                ->where('tgl_kembali', '<', Carbon::now()->format('Y-m-d'))
+            // Hitung terlambat: belum dikembalikan DAN tanggal kembali sudah lewat
+            $today = Carbon::now()->startOfDay();
+            $overdueBooks = Peminjaman_Buku::where('status', '!=', 'Dikembalikan')
+                ->whereDate('tanggal_kembali', '<', $today)
                 ->count();
         } catch (\Exception $e) {
             $overdueBooks = 0;

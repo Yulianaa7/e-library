@@ -13,6 +13,8 @@ class PeminjamanController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $tanggalDari = $request->input('tanggal_dari');
+        $tanggalSampai = $request->input('tanggal_sampai');
 
         $peminjaman = Peminjaman_Buku::with(['siswa.kelas', 'buku'])
             ->when($search, function ($query) use ($search) {
@@ -20,10 +22,16 @@ class PeminjamanController extends Controller
                     $q->whereHas('siswa', function ($s) use ($search) {
                         $s->where('nama_siswa', 'like', "%{$search}%");
                     })
-                        ->orWhereHas('buku', function ($b) use ($search) {
-                            $b->where('nama_buku', 'like', "%{$search}%");
-                        });
+                    ->orWhereHas('buku', function ($b) use ($search) {
+                        $b->where('nama_buku', 'like', "%{$search}%");
+                    });
                 });
+            })
+            ->when($tanggalDari, function ($query) use ($tanggalDari) {
+                $query->whereDate('tanggal_pinjam', '>=', $tanggalDari);
+            })
+            ->when($tanggalSampai, function ($query) use ($tanggalSampai) {
+                $query->whereDate('tanggal_pinjam', '<=', $tanggalSampai);
             })
             ->orderBy('tanggal_pinjam', 'desc')
             ->get();
@@ -115,7 +123,6 @@ class PeminjamanController extends Controller
         return redirect()->route('peminjaman.index')
             ->with('success', 'Peminjaman berhasil diupdate!');
     }
-
 
     public function destroy($id)
     {
