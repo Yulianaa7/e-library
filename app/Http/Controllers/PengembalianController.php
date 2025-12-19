@@ -56,19 +56,16 @@ class PengembalianController extends Controller
 
         $dt_kembali = Peminjaman_Buku::where('id_peminjaman', $request->id_peminjaman)->first();
 
-        // 🔥 PERBAIKAN PERHITUNGAN DENDA
         $today = \Carbon\Carbon::now()->startOfDay();
         $tanggal_kembali = \Carbon\Carbon::parse($dt_kembali->tanggal_kembali)->startOfDay();
-        $dendaperhari = 1500;
+        $dendaperhari = 500;
 
-        // Hitung hari terlambat
         $hariTerlambat = 0;
         $denda = 0;
 
         if ($today->gt($tanggal_kembali)) {
-            // Gunakan diffInDays dengan parameter false untuk hasil negatif jika terlambat
             $hariTerlambat = $tanggal_kembali->diffInDays($today, false);
-            $hariTerlambat = abs($hariTerlambat); // Ambil nilai absolut
+            $hariTerlambat = abs($hariTerlambat); 
             $denda = $hariTerlambat * $dendaperhari;
         }
 
@@ -91,7 +88,6 @@ class PengembalianController extends Controller
             $buku->increment('stok');
         }
 
-        // 🔥 PESAN NOTIFIKASI YANG BENAR
         if ($denda > 0) {
             $message = "Buku berhasil dikembalikan! Terlambat {$hariTerlambat} hari. Total denda: Rp " . number_format($denda, 0, ',', '.');
         } else {
@@ -153,7 +149,6 @@ class PengembalianController extends Controller
             'denda' => $request->denda,
         ]);
 
-        // 🔥 SINKRONISASI - Jika id_peminjaman berubah
         if ($old_id_peminjaman != $request->id_peminjaman) {
             // Kembalikan status peminjaman lama ke 'Dipinjam'
             $old_peminjaman = Peminjaman_Buku::find($old_id_peminjaman);
@@ -165,7 +160,6 @@ class PengembalianController extends Controller
             }
         }
 
-        // Update status peminjaman baru
         $peminjaman = Peminjaman_Buku::find($request->id_peminjaman);
         if ($peminjaman) {
             $peminjaman->update([
@@ -181,11 +175,9 @@ class PengembalianController extends Controller
     {
         $pengembalian = Pengembalian_Buku::findOrFail($id);
 
-        // Ambil data peminjaman
         $peminjaman = Peminjaman_Buku::find($pengembalian->id_peminjaman);
 
         if ($peminjaman) {
-            // 🔥 KEMBALIKAN STATUS PEMINJAMAN
             $peminjaman->update([
                 'status' => 'Dipinjam',
                 'tanggal_dikembalikan' => null

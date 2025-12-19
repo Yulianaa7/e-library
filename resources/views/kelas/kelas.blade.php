@@ -37,6 +37,19 @@
             gap: 10px;
         }
 
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
         .btn-back {
             padding: 10px 25px;
             background: rgba(255, 255, 255, 0.2);
@@ -370,6 +383,11 @@
             .kelas-grid {
                 grid-template-columns: 1fr;
             }
+
+            .navbar-right {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -386,9 +404,15 @@
                 Edit Kelas
             @endif
         </h1>
-        <a href="{{ $mode == 'index' ? '/' : route('kelas.index') }}" class="btn-back">
-            <i class="fa-solid fa-arrow-left"></i> Kembali
-        </a>
+        <div class="navbar-right">
+            <span class="user-badge">
+                <i class="fa-solid fa-user"></i> {{ session('name') }} 
+                <strong>({{ ucfirst(session('role')) }})</strong>
+            </span>
+            <a href="{{ $mode == 'index' ? route('dashboard') : route('kelas.index') }}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
+        </div>
     </nav>
 
     <div class="container">
@@ -437,16 +461,20 @@
                             <a href="{{ route('kelas.edit', $k->id_kelas) }}" class="btn-action btn-edit">
                                 <i class="fa-solid fa-edit"></i> Edit
                             </a>
-                            <form action="{{ route('kelas.destroy', $k->id_kelas) }}" 
-                                  method="POST" 
-                                  style="flex: 1;"
-                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelas ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-action btn-delete" style="width: 100%;">
-                                    <i class="fa-solid fa-trash"></i> Hapus
-                                </button>
-                            </form>
+                            
+                            {{-- Tombol Hapus - HANYA untuk Superadmin --}}
+                            @if(session('role') === 'superadmin')
+                                <form action="{{ route('kelas.destroy', $k->id_kelas) }}" 
+                                      method="POST" 
+                                      style="flex: 1;"
+                                      onsubmit="return confirm('Yakin ingin menghapus kelas {{ $k->nama_kelas }}?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-action btn-delete" style="width: 100%;">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 @empty

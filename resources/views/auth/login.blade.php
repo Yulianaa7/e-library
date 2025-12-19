@@ -1,12 +1,10 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistem Perpustakaan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * {
@@ -26,14 +24,13 @@
         }
 
         .login-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            max-width: 450px;
             width: 100%;
-            max-width: 900px;
-            display: flex;
-            animation: slideUp 0.6s ease;
+            animation: slideUp 0.5s ease;
         }
 
         @keyframes slideUp {
@@ -41,57 +38,49 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .login-left {
-            flex: 1;
+        .login-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 60px 40px;
             color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 40px 30px;
             text-align: center;
         }
 
-        .login-left h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .login-left p {
-            font-size: 1.1em;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        .book-icon i {
-            font-size: 50px;
-            color: #ffffff;
+        .login-header i {
+            font-size: 3em;
             margin-bottom: 15px;
         }
 
-        .login-right {
-            flex: 1;
-            padding: 60px 40px;
+        .login-header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
         }
 
-        .login-form h2 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2em;
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.95em;
         }
 
-        .login-form p {
-            color: #666;
-            margin-bottom: 30px;
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .alert-danger {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
         }
 
         .form-group {
@@ -105,14 +94,26 @@
             font-weight: 500;
         }
 
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 15px 12px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1em;
-            transition: all 0.3s;
             font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
         }
 
         .form-group input:focus {
@@ -125,30 +126,28 @@
             border-color: #f44336;
         }
 
-        .password-wrapper {
-            position: relative;
+        .error-message {
+            color: #f44336;
+            font-size: 0.85em;
+            margin-top: 5px;
         }
 
-        .password-wrapper input {
-            padding-right: 45px;
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #666;
+        .remember-me input {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
-            font-size: 1.2em;
-            transition: color 0.3s;
-            padding: 5px;
         }
 
-        .toggle-password:hover {
-            color: #667eea;
+        .remember-me label {
+            cursor: pointer;
+            user-select: none;
         }
 
         .btn-login {
@@ -158,11 +157,10 @@
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 1.1em;
             font-weight: 600;
+            font-size: 1.1em;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 10px;
         }
 
         .btn-login:hover {
@@ -170,171 +168,115 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.95em;
-            border: 1px solid #ef5350;
-            animation: shake 0.5s;
+        .login-footer {
+            text-align: center;
+            padding: 20px 30px 30px;
+            color: #666;
+            font-size: 0.9em;
         }
 
-        .text-danger {
-            color: #c62828;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            color: #1565c0;
-            padding: 15px;
+        .demo-accounts {
+            background: #f8f9ff;
+            padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-            font-size: 0.9em;
-            border-left: 4px solid #1976d2;
         }
 
-        .info-box strong {
-            display: block;
-            margin-bottom: 8px;
+        .demo-accounts h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.95em;
         }
 
-        .info-box .credentials {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 8px;
-            font-family: monospace;
+        .demo-accounts p {
+            font-size: 0.85em;
+            color: #666;
+            margin: 5px 0;
         }
 
-        @media (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
+        @media (max-width: 480px) {
+            .login-header {
+                padding: 30px 20px;
             }
 
-            .login-left {
-                padding: 40px 30px;
+            .login-header h1 {
+                font-size: 1.5em;
             }
 
-            .login-right {
-                padding: 40px 30px;
+            .login-body {
+                padding: 30px 20px;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="login-container">
-        <div class="login-left">
-            <div class="book-icon">
-                <i class="fa-solid fa-book-open"></i>
-            </div>
-            <h1>Perpustakaan Digital</h1>
-            <p>Sistem manajemen perpustakaan modern untuk pengelolaan buku, anggota, dan peminjaman yang efisien</p>
+        <div class="login-header">
+            <i class="fa-solid fa-book-open"></i>
+            <h1>Sistem Perpustakaan</h1>
+            <p>Silakan login untuk melanjutkan</p>
         </div>
-        <div class="login-right">
-            <form class="login-form" action="{{ route('login.process') }}" method="POST">
+
+        <div class="login-body">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            <form action="{{ route('login.post') }}" method="POST">
                 @csrf
-                <h2>Selamat Datang</h2>
-                <p>Silakan login untuk melanjutkan</p>
-
-                @if(session('error'))
-                    <div class="error-message">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
+                
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" 
-                           id="username" 
-                           name="username" 
-                           class="@error('username') is-invalid @enderror" 
-                           value="{{ old('username') }}"
-                           required 
-                           placeholder="Masukkan username" 
-                           autocomplete="username">
-                    @error('username') 
-                        <small class="text-danger">{{ $message }}</small> 
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="username" 
+                               class="@error('username') is-invalid @enderror"
+                               value="{{ old('username') }}" 
+                               placeholder="Masukkan username" 
+                               required autofocus>
+                    </div>
+                    @error('username')
+                        <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" 
-                               id="password" 
-                               name="password"
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" 
                                class="@error('password') is-invalid @enderror"
-                               required 
                                placeholder="Masukkan password" 
-                               autocomplete="current-password">
-                        <button type="button" class="toggle-password" onclick="togglePassword()">
-                            <i class="fa-solid fa-eye-slash" id="toggleIcon"></i>
-                        </button>
+                               required>
                     </div>
-                    @error('password') 
-                        <small class="text-danger">{{ $message }}</small> 
+                    @error('password')
+                        <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <button type="submit" class="btn-login">Login</button>
+                <div class="remember-me">
+                    <input type="checkbox" name="remember" id="remember">
+                    <label for="remember">Ingat Saya</label>
+                </div>
 
-                {{-- Uncomment untuk menampilkan info akun demo --}}
-                {{-- <div class="info-box">
-                    <strong>Akun Demo:</strong>
-                    <div class="credentials">
-                        <div>👤 Admin: <strong>admin</strong> / <strong>admin123</strong></div>
-                        <div style="margin-top: 5px;">🔐 Super Admin: <strong>superadmin</strong> / <strong>super123</strong></div>
-                    </div>
-                </div> --}}
+                <button type="submit" class="btn-login">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </button>
             </form>
+
+            <div class="demo-accounts">
+                <h4><i class="fa-solid fa-info-circle"></i> Demo Accounts:</h4>
+                <p><strong>Superadmin:</strong> superadmin / password</p>
+                <p><strong>Admin:</strong> admin / password</p>
+            </div>
+        </div>
+
+        <div class="login-footer">
+            &copy; 2025 Sistem Perpustakaan Digital
         </div>
     </div>
-
-    <script>
-        // Toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            }
-        }
-
-        // Auto-hide error messages when user starts typing
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-
-        if (usernameInput) {
-            usernameInput.addEventListener('input', function() {
-                this.classList.remove('is-invalid');
-            });
-        }
-
-        if (passwordInput) {
-            passwordInput.addEventListener('input', function() {
-                this.classList.remove('is-invalid');
-            });
-        }
-    </script>
 </body>
-
-</html> -->
+</html>

@@ -41,7 +41,7 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .role-badge {
@@ -49,6 +49,24 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             font-weight: 500;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: white;
+            color: #667eea;
         }
 
         .container {
@@ -178,11 +196,19 @@
 
 <body>
     <nav class="navbar">
-        <h1><i class="fa-solid fa-book-open"></i> Perpustakaan Digital</h1>
-        <div class="user-info">
-            <span class="role-badge">Sistem Perpustakaan</span>
-        </div>
-    </nav>
+    <h1><i class="fa-solid fa-book-open"></i> Perpustakaan Digital</h1>
+    <div class="user-info">
+        <span class="role-badge">
+            <i class="fa-solid fa-user"></i> {{ session('name') ?? 'User' }} ({{ ucfirst(session('role') ?? 'guest') }})
+        </span>
+        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+            @csrf
+            <button type="submit" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </form>
+    </div>
+</nav>
 
     <div class="container">
         <div class="stats-grid">

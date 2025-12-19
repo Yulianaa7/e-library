@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Buku;
 use App\Models\Siswa;
 use App\Models\Peminjaman_Buku;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -12,7 +13,24 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Hitung statistik dengan error handling
+        // Cek session manual
+        if (!session()->has('user_id')) {
+            \Log::error('Session tidak ada user_id');
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu');
+        }
+        
+        // Ambil user dari session
+        $userId = session('user_id');
+        $user = User::find($userId);
+        
+        if (!$user) {
+            \Log::error('User tidak ditemukan dengan ID: ' . $userId);
+            session()->flush();
+            return redirect('/login')->with('error', 'Session invalid');
+        }
+        
+        \Log::info('Dashboard berhasil diakses oleh: ' . $user->username);
+
         $totalBooks = 0;
         $totalStudents = 0;
         $activeBorrows = 0;
@@ -31,14 +49,12 @@ class DashboardController extends Controller
         }
 
         try {
-            // Hitung peminjaman yang sedang dipinjam (status bukan 'Dikembalikan')
             $activeBorrows = Peminjaman_Buku::where('status', '!=', 'Dikembalikan')->count();
         } catch (\Exception $e) {
             $activeBorrows = 0;
         }
 
         try {
-            // Hitung terlambat: belum dikembalikan DAN tanggal kembali sudah lewat
             $today = Carbon::now()->startOfDay();
             $overdueBooks = Peminjaman_Buku::where('status', '!=', 'Dikembalikan')
                 ->whereDate('tanggal_kembali', '<', $today)
@@ -51,7 +67,8 @@ class DashboardController extends Controller
             'totalBooks',
             'totalStudents',
             'activeBorrows',
-            'overdueBooks'
+            'overdueBooks',
+            'user'
         ));
     }
 }

@@ -421,7 +421,7 @@
                 <div class="icon">⚠️</div>
                 <div class="text">
                     <h3>Informasi Denda Keterlambatan</h3>
-                    <p>Denda keterlambatan pengembalian buku adalah Rp 1.500 per hari. Pastikan untuk mengembalikan buku tepat
+                    <p>Denda keterlambatan pengembalian buku adalah Rp 500 per hari. Pastikan untuk mengembalikan buku tepat
                         waktu untuk menghindari denda.</p>
                 </div>
             </div>
@@ -433,7 +433,7 @@
                         $tglKembali = \Carbon\Carbon::parse($item->tanggal_kembali);
                         $hariTerlambat = $today->startOfDay()->diffInDays($tglKembali->startOfDay(), false);
                         $hariTerlambat = $hariTerlambat < 0 ? abs($hariTerlambat) : 0;
-                        $denda = $hariTerlambat * 1500;
+                        $denda = $hariTerlambat * 500;
                         
                         $cardClass = 'normal';
                         $statusClass = 'status-normal';
@@ -483,7 +483,7 @@
                                 </div>
                                 <div class="denda-row">
                                     <span>Denda per Hari:</span>
-                                    <span>Rp 1.500</span>
+                                    <span>Rp 500</span>
                                 </div>
                                 <div class="denda-row">
                                     <span>Total Denda:</span>
@@ -517,7 +517,7 @@
                     $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali);
                     $hariTerlambat = $today->startOfDay()->diffInDays($tglKembali->startOfDay(), false);
                     $hariTerlambat = $hariTerlambat < 0 ? abs($hariTerlambat) : 0;
-                    $denda = $hariTerlambat * 1500;
+                    $denda = $hariTerlambat * 500;
                 @endphp
 
                 <div class="confirmation-content">

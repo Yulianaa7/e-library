@@ -128,13 +128,18 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman_Buku::findOrFail($id);
 
+        // Hapus data pengembalian yang terkait terlebih dahulu
+        \App\Models\Pengembalian_Buku::where('id_peminjaman', $id)->delete();
+
+        // Kembalikan stok jika belum dikembalikan
         if ($peminjaman->status !== 'Dikembalikan') {
             Buku::where('id_buku', $peminjaman->id_buku)->increment('stok');
         }
 
+        // Hapus peminjaman
         $peminjaman->delete();
 
         return redirect()->route('peminjaman.index')
-            ->with('success', 'Peminjaman berhasil dihapus!');
+            ->with('success', 'Peminjaman dan data pengembalian terkait berhasil dihapus!');
     }
 }

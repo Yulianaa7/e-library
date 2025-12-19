@@ -37,6 +37,19 @@
             gap: 10px;
         }
 
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
         .btn-back {
             padding: 10px 25px;
             background: rgba(255, 255, 255, 0.2);
@@ -334,6 +347,11 @@
             .desc-cell {
                 max-width: 150px;
             }
+
+            .navbar-right {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -350,9 +368,15 @@
                 Edit Buku
             @endif
         </h1>
-        <a href="{{ $mode == 'index' ? route('dashboard') : route('buku.index') }}" class="btn-back">
-            <i class="fa-solid fa-arrow-left"></i> Kembali
-        </a>
+        <div class="navbar-right">
+            <span class="user-badge">
+                <i class="fa-solid fa-user"></i> {{ session('name') }} 
+                <strong>({{ ucfirst(session('role')) }})</strong>
+            </span>
+            <a href="{{ $mode == 'index' ? route('dashboard') : route('buku.index') }}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
+        </div>
     </nav>
 
     <div class="container">
@@ -420,16 +444,20 @@
                                     <a href="{{ route('buku.edit', $item->id_buku) }}" class="btn-action btn-edit">
                                         <i class="fa-solid fa-edit"></i> Edit
                                     </a>
-                                    <form action="{{ route('buku.destroy', $item->id_buku) }}" 
-                                          method="POST" 
-                                          style="display: inline;"
-                                          onsubmit="return confirm('Yakin hapus?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete">
-                                            <i class="fa-solid fa-trash"></i> Hapus
-                                        </button>
-                                    </form>
+                                    
+                                    {{-- Tombol Hapus - HANYA untuk Superadmin --}}
+                                    @if(session('role') === 'superadmin')
+                                        <form action="{{ route('buku.destroy', $item->id_buku) }}" 
+                                              method="POST" 
+                                              style="display: inline;"
+                                              onsubmit="return confirm('Yakin ingin menghapus buku {{ $item->nama_buku }}?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-delete">
+                                                <i class="fa-solid fa-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
