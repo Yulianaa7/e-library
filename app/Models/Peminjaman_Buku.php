@@ -32,6 +32,6 @@ class Peminjaman_Buku extends Model
 
     public function pengembalian()
     {
-        return $this->hasOne(Pengembalian_Buku::class, 'id_peminjaman_buku', 'id_peminjaman_buku');
+        return $this->hasOne(Pengembalian_Buku::class, 'id_peminjaman', 'id_peminjaman');
     }
 }

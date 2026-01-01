@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f7fa;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -26,55 +26,150 @@
         .login-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            max-width: 450px;
+            max-width: 1000px;
             width: 100%;
-            animation: slideUp 0.5s ease;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            animation: fadeIn 0.5s ease;
         }
 
-        @keyframes slideUp {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: scale(1);
             }
         }
 
-        .login-header {
+        /* Left Side - Brand */
+        .login-left {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 30px;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .login-header i {
-            font-size: 3em;
+        .login-left::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        .login-left::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -50px;
+            left: -50px;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-icon {
+            font-size: 5em;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .brand-content h1 {
+            font-size: 2.5em;
             margin-bottom: 15px;
+            font-weight: 700;
         }
 
-        .login-header h1 {
-            font-size: 1.8em;
-            margin-bottom: 5px;
-        }
-
-        .login-header p {
+        .brand-content p {
+            font-size: 1.1em;
             opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            text-align: left;
+            margin-top: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-item i {
+            font-size: 1.5em;
+        }
+
+        .feature-item span {
             font-size: 0.95em;
         }
 
-        .login-body {
-            padding: 40px 30px;
+        /* Right Side - Form */
+        .login-right {
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            margin-bottom: 40px;
+        }
+
+        .login-header h2 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.95em;
         }
 
         .alert {
             padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
             font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .alert-danger {
@@ -92,6 +187,7 @@
             margin-bottom: 8px;
             color: #333;
             font-weight: 500;
+            font-size: 0.95em;
         }
 
         .input-wrapper {
@@ -104,11 +200,12 @@
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            font-size: 1.1em;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px 12px 45px;
+            padding: 14px 15px 14px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1em;
@@ -119,7 +216,7 @@
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
         .form-group input.is-invalid {
@@ -130,29 +227,33 @@
             color: #f44336;
             font-size: 0.85em;
             margin-top: 5px;
+            display: block;
         }
 
         .remember-me {
             display: flex;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .remember-me input {
-            margin-right: 8px;
+            margin-right: 10px;
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: #667eea;
         }
 
         .remember-me label {
             cursor: pointer;
             user-select: none;
+            font-size: 0.95em;
+            color: #666;
         }
 
         .btn-login {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -161,67 +262,136 @@
             font-size: 1.1em;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
-        .login-footer {
-            text-align: center;
-            padding: 20px 30px 30px;
-            color: #666;
-            font-size: 0.9em;
+        .btn-login:active {
+            transform: translateY(0);
         }
 
         .demo-accounts {
             background: #f8f9ff;
             padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 2px dashed #d0d7ff;
         }
 
         .demo-accounts h4 {
             color: #667eea;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .demo-accounts p {
             font-size: 0.85em;
             color: #666;
-            margin: 5px 0;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .demo-accounts strong {
+            color: #333;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 968px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .login-left {
+                padding: 40px 30px;
+            }
+
+            .brand-content h1 {
+                font-size: 2em;
+            }
+
+            .features {
+                display: none;
+            }
+
+            .login-right {
+                padding: 40px 30px;
+            }
         }
 
         @media (max-width: 480px) {
-            .login-header {
+            body {
+                padding: 10px;
+            }
+
+            .login-right {
                 padding: 30px 20px;
             }
 
-            .login-header h1 {
-                font-size: 1.5em;
+            .login-header h2 {
+                font-size: 1.6em;
             }
 
-            .login-body {
-                padding: 30px 20px;
+            .brand-icon {
+                font-size: 3.5em;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <i class="fa-solid fa-book-open"></i>
-            <h1>Sistem Perpustakaan</h1>
-            <p>Silakan login untuk melanjutkan</p>
+        <!-- Left Side - Brand -->
+        <div class="login-left">
+            <div class="brand-content">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <h1>Perpustakaan Digital</h1>
+                <p>Sistem Manajemen Perpustakaan Modern untuk Pengelolaan yang Lebih Efisien</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-item">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Manajemen Buku</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Peminjaman & Pengembalian</span>
+                </div>
+            </div>
         </div>
 
-        <div class="login-body">
+        <!-- Right Side - Form -->
+        <div class="login-right">
+            <div class="login-header">
+                <h2>Selamat Datang!</h2>
+                <p>Silakan login untuk melanjutkan ke sistem</p>
+            </div>
+
             @if($errors->any())
                 <div class="alert alert-danger">
                     <i class="fa-solid fa-circle-exclamation"></i>
-                    {{ $errors->first() }}
+                    <span>{{ $errors->first() }}</span>
                 </div>
             @endif
 
@@ -259,23 +429,18 @@
 
                 <div class="remember-me">
                     <input type="checkbox" name="remember" id="remember">
-                    <label for="remember">Ingat Saya</label>
+                    <label for="remember">Ingat saya di perangkat ini</label>
                 </div>
 
                 <button type="submit" class="btn-login">
-                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Login Sekarang</span>
                 </button>
             </form>
 
-            <div class="demo-accounts">
-                <h4><i class="fa-solid fa-info-circle"></i> Demo Accounts:</h4>
-                <p><strong>Superadmin:</strong> superadmin / password</p>
-                <p><strong>Admin:</strong> admin / password</p>
+            <div class="login-footer">
+                &copy; 2025 Sistem Perpustakaan Digital. Kelompok 6.
             </div>
-        </div>
-
-        <div class="login-footer">
-            &copy; 2025 Sistem Perpustakaan Digital
         </div>
     </div>
 </body>
