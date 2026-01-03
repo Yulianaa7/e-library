@@ -68,12 +68,17 @@ class KelasController extends Controller
             ->with('success', 'Kelas berhasil diupdate!');
     }
 
-    public function destroy($id)
-    {
-        $kelas = Kelas::findOrFail($id);
-        $kelas->delete();
-
+    public function destroy(string $id)
+{
+    $kelas = Kelas::findOrFail($id);
+    
+    // Cek apakah kelas masih memiliki siswa
+    if ($kelas->siswa()->count() > 0) {
         return redirect()->route('kelas.index')
-            ->with('success', 'Kelas berhasil dihapus!');
+                        ->with('error', 'Kelas tidak dapat dihapus karena masih memiliki siswa terdaftar.');
     }
+    
+    $kelas->delete();
+    return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus.');
+}
 }

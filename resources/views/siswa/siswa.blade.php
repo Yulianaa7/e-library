@@ -4,610 +4,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $mode == 'index' ? 'Manajemen Siswa' : ($mode == 'create' ? 'Tambah Siswa' : 'Edit Siswa') }} - Sistem Perpustakaan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{{ $mode == 'index' ? 'Manajemen Siswa' : ($mode == 'create' ? 'Tambah Siswa' : 'Edit Siswa') }} - PustakaHub Premium</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #f0f9ff, #e0f2fe);
+            color: #1e293b;
+            min-height: 100vh;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f7fa;
+        .blue-gradient-glow {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .navbar h1 {
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .inner-soft-shadow {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.02), inset -2px -2px 5px rgba(255,255,255,0.7);
         }
 
-        .user-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
+        .btn-hover-effect {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-back {
-            padding: 10px 25px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-back:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .container {
-            max-width: {{ $mode == 'index' ? '1400px' : '800px' }};
-            margin: 40px auto;
-            padding: 0 40px;
-        }
-
-        /* INDEX STYLES */
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .page-title {
-            font-size: 2em;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .btn-add {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1em;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-add:hover {
+        .btn-hover-effect:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            filter: brightness(1.1);
         }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .search-box {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-search {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .siswa-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        .siswa-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-            animation: fadeIn 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .siswa-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .siswa-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .siswa-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .siswa-avatar {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            color: white;
-            font-weight: 600;
-        }
-
-        .siswa-title {
-            flex: 1;
-        }
-
-        .siswa-title h3 {
-            font-size: 1.3em;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .siswa-subtitle {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .siswa-info {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        .info-label {
-            color: #666;
-            font-size: 0.9em;
-            font-weight: 500;
-        }
-
-        .info-text {
-            color: #333;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        .siswa-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .siswa-actions form {
-            flex: 1;
-            margin: 0;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.9em;
-            cursor: pointer;
-            text-align: center;
-            width: 100%;
-        }
-
-        .btn-edit {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #45a049;
-        }
-
-        .btn-delete {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #da190b;
-        }
-
-        /* FORM STYLES */
-        .form-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            padding: 40px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .required {
-            color: #f44336;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group input.is-invalid,
-        .form-group select.is-invalid,
-        .form-group textarea.is-invalid {
-            border-color: #f44336;
-        }
-
-        .error-message {
-            color: #f44336;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn-submit {
-            flex: 1;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1em;
-            cursor: pointer;
-        }
-
-        .btn-cancel {
-            flex: 1;
-            padding: 14px;
-            background: #e0e0e0;
-            color: #333;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            text-align: center;
-            display: inline-block;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 20px;
-            }
-
-            .header-section {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-
-            .siswa-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .navbar-right {
-                flex-direction: column;
-                gap: 10px;
-            }
+        .siswa-avatar-premium {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            color: #0369a1;
+            font-weight: 800;
         }
     </style>
 </head>
 
-<body>
-    <nav class="navbar">
-        <h1>
-            <i class="fa-solid fa-user-graduate"></i>
-            @if($mode == 'index')
-                Manajemen Siswa
-            @elseif($mode == 'create')
-                Tambah Siswa Baru
-            @else
-                Edit Siswa
-            @endif
-        </h1>
-        <div class="navbar-right">
-            <span class="user-badge">
-                <i class="fa-solid fa-user"></i> {{ session('name') }} 
-                <strong>({{ ucfirst(session('role')) }})</strong>
-            </span>
-            <a href="{{ $mode == 'index' ? route('dashboard') : route('siswa.index') }}" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
+<body class="pb-20">
+    <div class="fixed top-0 left-0 w-1.5 h-full blue-gradient-glow z-[60]"></div>
+
+    <nav class="glass-nav sticky top-0 z-50 px-8 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 blue-gradient-glow rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
+                        @if($mode == 'index') Manajemen Siswa @else Profil {{ $mode == 'create' ? 'Baru' : 'Siswa' }} @endif
+                    </h1>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Database Anggota</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="{{ $mode == 'index' ? route('dashboard') : route('siswa.index') }}" class="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-xl transition-all text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container max-w-7xl mx-auto px-6 mt-12">
         @if($mode == 'index')
-            {{-- INDEX MODE --}}
-            <div class="header-section">
-                <h2 class="page-title">Data Siswa</h2>
-                <a href="{{ route('siswa.create') }}" class="btn-add">
-                    <i class="fa-solid fa-plus"></i> Tambah Siswa
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Data Anggota</h2>
+                    <p class="text-slate-500 font-medium">Kelola informasi siswa dan status keanggotaan perpustakaan.</p>
+                </div>
+                <a href="{{ route('siswa.create') }}" class="w-full md:w-auto blue-gradient-glow text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 btn-hover-effect">
+                    <i class="fa-solid fa-user-plus text-lg"></i> Tambah Siswa Baru
                 </a>
             </div>
 
-            @if(session('success'))
-                <div class="alert alert-success">
-                    <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
-                </div>
-            @endif
+            <div class="grid grid-cols-1 gap-6 mb-10">
+                {{-- Notifikasi Success --}}
+                @if(session('success'))
+                    <script>
+                        Swal.fire({ 
+                            toast: true, 
+                            position: 'top-end', 
+                            icon: 'success', 
+                            title: "{{ session('success') }}", 
+                            showConfirmButton: false, 
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    </script>
+                @endif
 
-            <div class="search-box">
-                <form action="{{ route('siswa.index') }}" method="GET" class="search-form">
-                    <input type="text" name="search" placeholder="Cari nama siswa..." value="{{ request('search') }}">
-                    <button type="submit" class="btn-search">
-                        <i class="fa-solid fa-search"></i> Cari
-                    </button>
-                </form>
+                {{-- Notifikasi Error --}}
+                @if(session('error'))
+                    <script>
+                        Swal.fire({ 
+                            toast: true, 
+                            position: 'top-end', 
+                            icon: 'error', 
+                            title: "{{ session('error') }}", 
+                            showConfirmButton: false, 
+                            timer: 4000,
+                            timerProgressBar: true
+                        });
+                    </script>
+                @endif
+
+                <div class="glass-card p-3 rounded-[2rem] shadow-xl">
+                    <form action="{{ route('siswa.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
+                        <div class="relative flex-1 group">
+                            <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, kelas, atau alamat..." 
+                                   class="w-full bg-slate-100/50 border-none rounded-[1.5rem] pl-12 pr-6 py-4 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium">
+                        </div>
+                        <button type="submit" class="bg-slate-900 text-white px-10 py-4 rounded-[1.5rem] font-bold btn-hover-effect shadow-lg">Cari Anggota</button>
+                    </form>
+                </div>
             </div>
 
-            <div class="siswa-grid">
+            <div class="siswa-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($siswa as $s)
-                    <div class="siswa-card">
-                        <div class="siswa-header">
-                            <div class="siswa-avatar">
+                    <div class="glass-card p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 border border-white/60 relative group">
+                        <div class="flex items-center gap-5 mb-6">
+                            <div class="siswa-avatar-premium w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/50 uppercase">
                                 {{ strtoupper(substr($s->nama_siswa, 0, 2)) }}
                             </div>
-                            <div class="siswa-title">
-                                <h3>{{ $s->nama_siswa }}</h3>
-                                <div class="siswa-subtitle">{{ $s->tanggal_lahir }}</div>
+                            <div class="flex flex-col">
+                                <h3 class="text-xl font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">{{ $s->nama_siswa }}</h3>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Lahir: {{ $s->tanggal_lahir }}</span>
                             </div>
                         </div>
-                        <div class="siswa-info">
-                            <div class="info-row">
-                                <span class="info-label">Kelas</span>
-                                <span class="info-text">{{ $s->nama_kelas }}</span>
+
+                        <div class="space-y-4 mb-8">
+                            <div class="flex justify-between items-center p-3 bg-white/50 rounded-2xl border border-slate-100 shadow-sm">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Kelas</span>
+                                <span class="text-sm font-black text-indigo-600 uppercase">{{ $s->nama_kelas }}</span>
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">Jenis Kelamin</span>
-                                <span class="info-text">{{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
+                            <div class="flex justify-between items-center p-3 bg-white/50 rounded-2xl border border-slate-100 shadow-sm">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Gender</span>
+                                <span class="text-xs font-extrabold text-slate-700">
+                                    <i class="fa-solid {{ $s->gender == 'L' ? 'fa-mars text-blue-500' : 'fa-venus text-pink-500' }} mr-1"></i>
+                                    {{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                </span>
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">Alamat</span>
-                                <span class="info-text">{{ $s->alamat }}</span>
+                            <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 inner-soft-shadow">
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Alamat Domisili</label>
+                                <p class="text-xs font-bold text-slate-600 line-clamp-2 leading-relaxed italic">"{{ $s->alamat }}"</p>
                             </div>
                         </div>
-                        <div class="siswa-actions">
-                            <a href="{{ route('siswa.edit', $s->id_siswa) }}" class="btn-action btn-edit">
-                                <i class="fa-solid fa-edit"></i> Edit
+
+                        <div class="flex gap-3">
+                            <a href="{{ route('siswa.edit', $s->id_siswa) }}" class="flex-1 py-3.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-2xl text-[10px] font-black tracking-widest uppercase transition-all shadow-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-pencil"></i> Edit
                             </a>
-                            
-                            {{-- Tombol Hapus - HANYA untuk Superadmin --}}
                             @if(session('role') === 'superadmin')
-                                <form action="{{ route('siswa.destroy', $s->id_siswa) }}" 
-                                      method="POST" 
-                                      onsubmit="return confirm('Yakin ingin menghapus siswa {{ $s->nama_siswa }}?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-action btn-delete">
-                                        <i class="fa-solid fa-trash"></i> Hapus
+                                <form action="{{ route('siswa.destroy', $s->id_siswa) }}" method="POST" class="flex-1 delete-form">
+                                    @csrf @method('DELETE')
+                                    <button type="button" onclick="confirmDelete(this)" class="w-full py-3.5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-2xl text-[10px] font-black tracking-widest uppercase transition-all shadow-sm flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-trash-can"></i> Hapus
                                     </button>
                                 </form>
                             @endif
                         </div>
                     </div>
                 @empty
-                    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
-                        <p style="color: #666; font-size: 1.2em;">Belum ada data siswa</p>
+                    <div class="col-span-full py-32 text-center opacity-20">
+                        <i class="fa-solid fa-users-slash text-8xl mb-4"></i>
+                        <p class="text-2xl font-black tracking-tighter">BELUM ADA DATA SISWA</p>
                     </div>
                 @endforelse
             </div>
 
         @else
-            {{-- CREATE/EDIT MODE --}}
-            <div class="form-card">
-                <h2 class="page-title">{{ $mode == 'create' ? 'Form Tambah Siswa' : 'Form Edit Siswa' }}</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="glass-card p-10 md:p-14 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 blue-gradient-glow opacity-10 rounded-full -mr-16 -mt-16"></div>
+                    
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tighter mb-10">
+                        {{ $mode == 'create' ? 'Registrasi Siswa' : 'Update Data Siswa' }}
+                    </h2>
 
-                <form action="{{ $mode == 'create' ? route('siswa.store') : route('siswa.update', $siswa->id_siswa) }}" method="POST">
-                    @csrf
-                    @if($mode == 'edit')
-                        @method('PUT')
-                    @endif
+                    <form action="{{ $mode == 'create' ? route('siswa.store') : route('siswa.update', $siswa->id_siswa) }}" method="POST" class="space-y-6">
+                        @csrf
+                        @if($mode == 'edit') @method('PUT') @endif
 
-                    <div class="form-group">
-                        <label>Nama Siswa <span class="required">*</span></label>
-                        <input type="text" name="nama_siswa" 
-                               class="@error('nama_siswa') is-invalid @enderror"
-                               value="{{ old('nama_siswa', $siswa->nama_siswa ?? '') }}" 
-                               placeholder="Contoh: Budi Santoso"
-                               required>
-                        @error('nama_siswa')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                            <input type="text" name="nama_siswa" value="{{ old('nama_siswa', $siswa->nama_siswa ?? '') }}" 
+                                   class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-semibold" placeholder="Contoh: Budi Santoso" required>
+                            @error('nama_siswa') <span class="text-red-500 text-[10px] font-bold ml-1">{{ $message }}</span> @enderror
+                        </div>
 
-                    <div class="form-group">
-                        <label>Tanggal Lahir <span class="required">*</span></label>
-                        <input type="date" name="tanggal_lahir" 
-                               class="@error('tanggal_lahir') is-invalid @enderror"
-                               value="{{ old('tanggal_lahir', $siswa->tanggal_lahir ?? '') }}" 
-                               required>
-                        @error('tanggal_lahir')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tanggal Lahir</label>
+                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir ?? '') }}" 
+                                       class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold" required>
+                            </div>
 
-                    <div class="form-group">
-                        <label>Jenis Kelamin <span class="required">*</span></label>
-                        <select name="gender" 
-                                class="@error('gender') is-invalid @enderror" 
-                                required>
-                            <option value="">Pilih Jenis Kelamin</option>
-                            <option value="L" {{ old('gender', $siswa->gender ?? '') == 'L' ? 'selected' : '' }}>
-                                Laki-laki
-                            </option>
-                            <option value="P" {{ old('gender', $siswa->gender ?? '') == 'P' ? 'selected' : '' }}>
-                                Perempuan
-                            </option>
-                        </select>
-                        @error('gender')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Jenis Kelamin</label>
+                                <select name="gender" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold appearance-none" required>
+                                    <option value="">Pilih Gender</option>
+                                    <option value="L" {{ old('gender', $siswa->gender ?? '') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                    <option value="P" {{ old('gender', $siswa->gender ?? '') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Kelas <span class="required">*</span></label>
-                        <select name="id_kelas" 
-                                class="@error('id_kelas') is-invalid @enderror" 
-                                required>
-                            <option value="">Pilih Kelas</option>
-                            @foreach($kelas as $k)
-                                <option value="{{ $k->id_kelas }}" 
-                                    {{ old('id_kelas', $siswa->id_kelas ?? '') == $k->id_kelas ? 'selected' : '' }}>
-                                    {{ $k->nama_kelas }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_kelas')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Penempatan Kelas</label>
+                            <select name="id_kelas" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold appearance-none" required>
+                                <option value="">Pilih Kelas</option>
+                                @foreach($kelas as $k)
+                                    <option value="{{ $k->id_kelas }}" {{ old('id_kelas', $siswa->id_kelas ?? '') == $k->id_kelas ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Alamat <span class="required">*</span></label>
-                        <textarea name="alamat" 
-                                  class="@error('alamat') is-invalid @enderror"
-                                  placeholder="Contoh: Jl. Merdeka No. 123, Jakarta"
-                                  required>{{ old('alamat', $siswa->alamat ?? '') }}</textarea>
-                        @error('alamat')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Alamat Domisili</label>
+                            <textarea name="alamat" rows="3" class="w-full bg-slate-50 border-none rounded-3xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-medium" placeholder="Alamat lengkap tempat tinggal saat ini..." required>{{ old('alamat', $siswa->alamat ?? '') }}</textarea>
+                        </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn-submit">
-                            <i class="fa-solid fa-save"></i> {{ $mode == 'create' ? 'Simpan' : 'Update' }}
-                        </button>
-                        <a href="{{ route('siswa.index') }}" class="btn-cancel">
-                            <i class="fa-solid fa-times"></i> Batal
-                        </a>
-                    </div>
-                </form>
+                        <div class="flex flex-col md:flex-row gap-4 pt-6">
+                            <button type="submit" class="flex-[2] blue-gradient-glow text-white font-bold py-5 rounded-[2rem] btn-hover-effect shadow-xl text-lg active:scale-95">
+                                <i class="fa-solid fa-save mr-2"></i> {{ $mode == 'create' ? 'Verifikasi & Simpan' : 'Perbarui Profil' }}
+                            </button>
+                            <a href="{{ route('siswa.index') }}" class="flex-1 bg-slate-100 text-slate-500 font-bold py-5 rounded-[2rem] text-center hover:bg-slate-200 transition-all text-lg">
+                                Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         @endif
     </div>
-</body>
 
+    <script>
+        function confirmDelete(button) {
+            Swal.fire({
+                title: 'Hapus Anggota?',
+                text: "Data siswa akan dihapus permanen dari sistem!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#f1f5f9',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { confirmButton: 'rounded-xl px-8 py-3', cancelButton: 'rounded-xl px-8 py-3 text-slate-600' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.closest('form').submit();
+                }
+            });
+        }
+    </script>
+</body>
 </html>

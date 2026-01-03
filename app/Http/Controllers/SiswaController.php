@@ -11,7 +11,7 @@ class SiswaController extends Controller
     public function index(Request $request)
     {
         $siswa = Siswa::join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
-                      ->select('siswa.*', 'kelas.nama_kelas');
+            ->select('siswa.*', 'kelas.nama_kelas');
 
         if ($request->search) {
             $siswa->where('siswa.nama_siswa', 'like', '%' . $request->search . '%');
@@ -26,7 +26,7 @@ class SiswaController extends Controller
     public function create()
     {
         $mode = 'create';
-        $siswa = (object)[];
+        $siswa = (object) [];
         $kelas = Kelas::all();
         return view('siswa.siswa', compact('mode', 'siswa', 'kelas'));
     }
@@ -48,10 +48,10 @@ class SiswaController extends Controller
     public function show(string $id)
     {
         $siswa = Siswa::join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
-                      ->select('siswa.*', 'kelas.nama_kelas')
-                      ->where('siswa.id_siswa', $id)
-                      ->firstOrFail();
-        
+            ->select('siswa.*', 'kelas.nama_kelas')
+            ->where('siswa.id_siswa', $id)
+            ->firstOrFail();
+
         return view('siswa.show', compact('siswa'));
     }
 
@@ -81,6 +81,13 @@ class SiswaController extends Controller
     public function destroy(string $id)
     {
         $siswa = Siswa::findOrFail($id);
+
+        // Cek apakah siswa memiliki data peminjaman
+        if ($siswa->peminjaman()->count() > 0) {
+            return redirect()->route('siswa.index')
+                ->with('error', 'Siswa tidak dapat dihapus karena masih memiliki data peminjaman buku.');
+        }
+
         $siswa->delete();
         return redirect()->route('siswa.index')->with('success', 'Siswa berhasil dihapus.');
     }

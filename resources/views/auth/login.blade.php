@@ -3,443 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Perpustakaan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <title>Login - PustakaHub Premium</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #f0f9ff, #e0f2fe);
+            color: #1e293b;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
             padding: 20px;
         }
 
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            max-width: 1000px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            animation: fadeIn 0.5s ease;
+        .blue-gradient-glow {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
         }
 
-        /* Left Side - Brand */
-        .login-left {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+        .inner-soft-shadow {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.02), inset -2px -2px 5px rgba(255,255,255,0.7);
         }
 
-        .login-left::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
+        .btn-hover-effect {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .login-left::after {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            bottom: -50px;
-            left: -50px;
-        }
-
-        .brand-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .brand-icon {
-            font-size: 5em;
-            margin-bottom: 30px;
-            animation: float 3s ease-in-out infinite;
+        .btn-hover-effect:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.5);
         }
 
         @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        .floating-icon {
+            animation: float 4s ease-in-out infinite;
         }
 
-        .brand-content h1 {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .brand-content p {
-            font-size: 1.1em;
-            opacity: 0.9;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .features {
-            text-align: left;
-            margin-top: 40px;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .feature-item i {
-            font-size: 1.5em;
-        }
-
-        .feature-item span {
-            font-size: 0.95em;
-        }
-
-        /* Right Side - Form */
-        .login-right {
-            padding: 60px 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .login-header {
-            margin-bottom: 40px;
-        }
-
-        .login-header h2 {
-            font-size: 2em;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 0.95em;
-        }
-
-        .alert {
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .alert-danger {
-            background: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 0.95em;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
+        .blob {
             position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 1.1em;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 15px 14px 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group input.is-invalid {
-            border-color: #f44336;
-        }
-
-        .error-message {
-            color: #f44336;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .remember-me input {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .remember-me label {
-            cursor: pointer;
-            user-select: none;
-            font-size: 0.95em;
-            color: #666;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .demo-accounts {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 30px;
-            border: 2px dashed #d0d7ff;
-        }
-
-        .demo-accounts h4 {
-            color: #667eea;
-            margin-bottom: 12px;
-            font-size: 0.95em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .demo-accounts p {
-            font-size: 0.85em;
-            color: #666;
-            margin: 8px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .demo-accounts strong {
-            color: #333;
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            color: #999;
-            font-size: 0.85em;
-        }
-
-        @media (max-width: 968px) {
-            .login-container {
-                grid-template-columns: 1fr;
-                max-width: 500px;
-            }
-
-            .login-left {
-                padding: 40px 30px;
-            }
-
-            .brand-content h1 {
-                font-size: 2em;
-            }
-
-            .features {
-                display: none;
-            }
-
-            .login-right {
-                padding: 40px 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            .login-right {
-                padding: 30px 20px;
-            }
-
-            .login-header h2 {
-                font-size: 1.6em;
-            }
-
-            .brand-icon {
-                font-size: 3.5em;
-            }
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <!-- Left Side - Brand -->
-        <div class="login-left">
-            <div class="brand-content">
-                <div class="brand-icon">
-                    <i class="fa-solid fa-book-open"></i>
-                </div>
-                <h1>Perpustakaan Digital</h1>
-                <p>Sistem Manajemen Perpustakaan Modern untuk Pengelolaan yang Lebih Efisien</p>
-            </div>
+    <div class="blob" style="top: -10%; right: -10%;"></div>
+    <div class="blob" style="bottom: -10%; left: -10%;"></div>
 
-            <div class="features">
-                <div class="feature-item">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <span>Manajemen Buku</span>
-                </div>
-                <div class="feature-item">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <span>Peminjaman & Pengembalian</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Side - Form -->
-        <div class="login-right">
-            <div class="login-header">
-                <h2>Selamat Datang!</h2>
-                <p>Silakan login untuk melanjutkan ke sistem</p>
-            </div>
-
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>{{ $errors->first() }}</span>
-                </div>
-            @endif
-
-            <form action="{{ route('login.post') }}" method="POST">
-                @csrf
+    <div class="w-full max-w-[1000px] relative z-10">
+        <div class="glass-card rounded-[3.5rem] overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+            
+            <div class="md:w-5/12 blue-gradient-glow p-12 text-white flex flex-col justify-center relative overflow-hidden">
+                <i class="fa-solid fa-book-bookmark absolute -bottom-10 -right-10 text-[250px] opacity-10 rotate-12"></i>
                 
-                <div class="form-group">
-                    <label>Username</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" name="username" 
-                               class="@error('username') is-invalid @enderror"
-                               value="{{ old('username') }}" 
-                               placeholder="Masukkan username" 
-                               required autofocus>
+                <div class="relative z-10 text-center md:text-left">
+                    <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-[2rem] flex items-center justify-center mb-8 shadow-xl mx-auto md:mx-0 floating-icon text-white text-4xl">
+                        <i class="fa-solid fa-layer-group"></i>
                     </div>
-                    @error('username')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label>Password</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" 
-                               class="@error('password') is-invalid @enderror"
-                               placeholder="Masukkan password" 
-                               required>
+                    <h1 class="text-5xl font-black tracking-tighter mb-4">Pustaka<span class="text-blue-200">Hub</span></h1>
+                    <p class="text-blue-50 text-lg font-medium leading-relaxed opacity-90 mb-8">
+                        Sistem Manajemen Perpustakaan Modern untuk pengalaman literasi digital yang efisien.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                            <i class="fa-solid fa-shield-halved text-blue-200 text-xl"></i>
+                            <span class="text-sm font-bold uppercase tracking-wider">Akses Terenkripsi</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                            <i class="fa-solid fa-bolt text-blue-200 text-xl"></i>
+                            <span class="text-sm font-bold uppercase tracking-wider">Sirkulasi Real-time</span>
+                        </div>
                     </div>
-                    @error('password')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
+                </div>
+            </div>
+
+            <div class="md:w-7/12 p-12 md:p-16 flex flex-col justify-center bg-white/40">
+                <div class="mb-10">
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">Selamat Datang</h2>
+                    <p class="text-slate-500 font-medium mt-2">Silakan login untuk mengakses panel kontrol.</p>
                 </div>
 
-                <div class="remember-me">
-                    <input type="checkbox" name="remember" id="remember">
-                    <label for="remember">Ingat saya di perangkat ini</label>
+                @if($errors->any())
+                    <div class="mb-6 flex items-center gap-3 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-pulse">
+                        <i class="fas fa-circle-exclamation text-lg"></i>
+                        <span>{{ $errors->first() }}</span>
+                    </div>
+                @endif
+
+                <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
+                    @csrf
+                    
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">ID Pengguna</label>
+                        <div class="relative group">
+                            <i class="fas fa-user absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
+                            <input type="text" name="username" value="{{ old('username') }}"
+                                class="w-full bg-white border-none rounded-2xl px-12 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 transition-all font-semibold @error('username') ring-2 ring-red-400 @enderror" 
+                                placeholder="Masukkan username" required autofocus autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Kata Sandi</label>
+                        <div class="relative group">
+                            <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
+                            <input type="password" name="password" id="password"
+                                class="w-full bg-white border-none rounded-2xl px-12 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 transition-all font-semibold @error('password') ring-2 ring-red-400 @enderror" 
+                                placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 ml-1">
+                        <input type="checkbox" name="remember" id="remember" class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500">
+                        <label for="remember" class="text-sm font-bold text-slate-500 cursor-pointer select-none">Ingat saya di perangkat ini</label>
+                    </div>
+
+                    <button type="submit" class="w-full py-5 blue-gradient-glow text-white font-bold rounded-[2rem] btn-hover-effect text-lg tracking-tight mt-4 flex items-center justify-center gap-3">
+                        <span>Masuk Ke Sistem</span>
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    </button>
+                </form>
+
+                <div class="mt-12 text-center border-t border-slate-100 pt-8">
+                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">
+                        &copy; 2026 PustakaHub Premium System
+                    </p>
                 </div>
-
-                <button type="submit" class="btn-login">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Login Sekarang</span>
-                </button>
-            </form>
-
-            <div class="login-footer">
-                &copy; 2025 Sistem Perpustakaan Digital. Kelompok 6.
             </div>
         </div>
     </div>

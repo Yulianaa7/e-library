@@ -4,679 +4,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $mode == 'index' ? 'Peminjaman Buku' : ($mode == 'create' ? 'Tambah Peminjaman' : 'Edit Peminjaman') }} - Sistem Perpustakaan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{{ $mode == 'index' ? 'Sirkulasi Buku' : ($mode == 'create' ? 'Input Peminjaman' : 'Edit Transaksi') }} - PustakaHub Premium</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #f0f9ff, #e0f2fe);
+            color: #1e293b;
+            min-height: 100vh;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f7fa;
+        .blue-gradient-glow {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .navbar h1 {
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .inner-soft-shadow {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.02), inset -2px -2px 5px rgba(255,255,255,0.7);
         }
 
-        .user-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
+        .btn-hover-effect {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-back {
-            padding: 10px 25px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-back:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .container {
-            max-width: {{ $mode == 'index' ? '1400px' : '800px' }};
-            margin: 40px auto;
-            padding: 0 40px;
-        }
-
-        /* INDEX STYLES */
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .page-title {
-            font-size: 2em;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .btn-add {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1em;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-add:hover {
+        .btn-hover-effect:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            filter: brightness(1.1);
         }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .search-box {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .search-box input {
-            flex: 1;
-            min-width: 200px;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .search-box input[type="date"] {
-            min-width: 180px;
-        }
-
-        .btn-search {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        th {
-            padding: 18px;
-            text-align: left;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 15px 18px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        tbody tr:hover {
-            background: #f8f9ff;
-        }
-
-        .badge-status {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .status-dipinjam {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-dikembalikan {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-terlambat {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .btn-action {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            margin-right: 8px;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.9em;
-            cursor: pointer;
-        }
-
-        .btn-detail {
-            background: #2196f3;
-            color: white;
-        }
-
-        .btn-edit {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #f44336;
-            color: white;
-        }
-
-        /* FORM STYLES */
-        .form-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            padding: 40px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .required {
-            color: #f44336;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group input.is-invalid,
-        .form-group select.is-invalid {
-            border-color: #f44336;
-        }
-
-        .error-message {
-            color: #f44336;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn-submit {
-            flex: 1;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1em;
-            cursor: pointer;
-        }
-
-        .btn-cancel {
-            flex: 1;
-            padding: 14px;
-            background: #e0e0e0;
-            color: #333;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            text-align: center;
-            display: inline-block;
-        }
-
-        .info-helper {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 20px;
-            }
-
-            .header-section {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-
-            .navbar-right {
-                flex-direction: column;
-                gap: 10px;
-            }
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
 
-<body>
-    <nav class="navbar">
-        <h1>
-            <i class="fa-solid fa-book-open"></i>
-            @if($mode == 'index')
-                Peminjaman Buku
-            @elseif($mode == 'create')
-                Tambah Peminjaman
-            @else
-                Edit Peminjaman
-            @endif
-        </h1>
-        <div class="navbar-right">
-            <span class="user-badge">
-                <i class="fa-solid fa-user"></i> {{ session('name') }} 
-                <strong>({{ ucfirst(session('role')) }})</strong>
-            </span>
-            <a href="{{ $mode == 'index' ? route('dashboard') : route('peminjaman.index') }}" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
+<body class="pb-20">
+    <div class="fixed top-0 left-0 w-1.5 h-full blue-gradient-glow z-[60]"></div>
+
+    <nav class="glass-nav sticky top-0 z-50 px-8 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 blue-gradient-glow rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
+                        @if($mode == 'index') Sirkulasi Buku @else Transaksi @endif
+                    </h1>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">PustakaHub System</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="{{ $mode == 'index' ? route('dashboard') : route('peminjaman.index') }}" class="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-xl transition-all text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container max-w-7xl mx-auto px-6 mt-12">
         @if($mode == 'index')
-            {{-- INDEX MODE --}}
-            <div class="header-section">
-                <h2 class="page-title">Data Peminjaman</h2>
-                <a href="{{ route('peminjaman.create') }}" class="btn-add">
-                    <i class="fa-solid fa-plus"></i> Tambah Peminjaman
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Riwayat Sirkulasi</h2>
+                    <p class="text-slate-500 font-medium">Kelola peminjaman dan pantau masa aktif pengembalian.</p>
+                </div>
+                <a href="{{ route('peminjaman.create') }}" class="w-full md:w-auto blue-gradient-glow text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 btn-hover-effect">
+                    <i class="fa-solid fa-plus-circle text-lg"></i> Pinjam Koleksi
                 </a>
             </div>
 
+            {{-- Notifikasi Success --}}
             @if(session('success'))
-                <div class="alert alert-success">
-                    <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
-                </div>
+                <script>
+                    Swal.fire({ 
+                        toast: true, 
+                        position: 'top-end', 
+                        icon: 'success', 
+                        title: "{{ session('success') }}", 
+                        showConfirmButton: false, 
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                </script>
             @endif
 
-            <div class="search-box">
-                <form action="{{ route('peminjaman.index') }}" method="GET" class="search-form">
-                    <input type="text" name="search" placeholder="Cari peminjaman..." value="{{ request('search') }}" style="flex: 2;">
-                    <input type="date" name="tanggal_dari" placeholder="Dari Tanggal" value="{{ request('tanggal_dari') }}" style="flex: 1;">
-                    <input type="date" name="tanggal_sampai" placeholder="Sampai Tanggal" value="{{ request('tanggal_sampai') }}" style="flex: 1;">
-                    <button type="submit" class="btn-search">
-                        <i class="fa-solid fa-search"></i> Filter
-                    </button>
-                    @if(request('search') || request('tanggal_dari') || request('tanggal_sampai'))
-                        <a href="{{ route('peminjaman.index') }}" class="btn-search" style="background: #6c757d; text-decoration: none; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-times"></i> Reset
-                        </a>
-                    @endif
+            {{-- Notifikasi Error --}}
+            @if(session('error'))
+                <script>
+                    Swal.fire({ 
+                        toast: true, 
+                        position: 'top-end', 
+                        icon: 'error', 
+                        title: "{{ session('error') }}", 
+                        showConfirmButton: false, 
+                        timer: 4000,
+                        timerProgressBar: true
+                    });
+                </script>
+            @endif
+
+            <div class="glass-card p-6 rounded-[2.5rem] shadow-xl mb-10">
+                <form action="{{ route('peminjaman.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <div class="md:col-span-5 relative group">
+                        <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa atau buku..." 
+                               class="w-full bg-slate-100/50 border-none rounded-2xl pl-12 pr-6 py-4 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium text-slate-700 shadow-sm">
+                    </div>
+
+                    <div class="md:col-span-3 relative group">
+                        <label class="absolute -top-2.5 left-4 px-2 bg-white text-[9px] font-black text-blue-500 uppercase tracking-widest z-10">Mulai Dari</label>
+                        <input type="date" name="tanggal_dari" value="{{ request('tanggal_dari') }}" 
+                               class="w-full bg-slate-100/50 border-none rounded-2xl px-5 py-4 outline-none focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium text-slate-500 shadow-sm">
+                    </div>
+
+                    <div class="md:col-span-3 relative group">
+                        <label class="absolute -top-2.5 left-4 px-2 bg-white text-[9px] font-black text-blue-500 uppercase tracking-widest z-10">Sampai Tanggal</label>
+                        <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}" 
+                               class="w-full bg-slate-100/50 border-none rounded-2xl px-5 py-4 outline-none focus:bg-white focus:ring-4 focus:ring-blue-100 font-medium text-slate-500 shadow-sm">
+                    </div>
+
+                    <div class="md:col-span-1 flex gap-2">
+                        <button type="submit" class="w-full blue-gradient-glow text-white rounded-2xl font-bold btn-hover-effect flex items-center justify-center">
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+                        @if(request('search') || request('tanggal_dari') || request('tanggal_sampai'))
+                            <a href="{{ route('peminjaman.index') }}" class="w-full bg-slate-200 text-slate-600 rounded-2xl flex items-center justify-center hover:bg-slate-300 transition-all shadow-sm" title="Reset Filter">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </a>
+                        @endif
+                    </div>
                 </form>
             </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Siswa</th>
-                            <th>Kelas</th>
-                            <th>Judul Buku</th>
-                            <th>Tgl Pinjam</th>
-                            <th>Tgl Kembali</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($peminjaman as $index => $p)
-                            @php
-                                // Hitung status otomatis berdasarkan tanggal
-                                $today = \Carbon\Carbon::now()->startOfDay();
-                                $tglKembali = \Carbon\Carbon::parse($p->tanggal_kembali)->startOfDay();
-                                
-                                $statusDisplay = $p->status;
-                                $statusClass = 'status-dipinjam';
-                                
-                                if ($p->status == 'Dikembalikan') {
-                                    $statusDisplay = 'Dikembalikan';
-                                    $statusClass = 'status-dikembalikan';
-                                } elseif ($today->gt($tglKembali)) {
-                                    $statusDisplay = 'Terlambat';
-                                    $statusClass = 'status-terlambat';
-                                } else {
-                                    $statusDisplay = 'Dipinjam';
-                                    $statusClass = 'status-dipinjam';
-                                }
-                            @endphp
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $p->siswa->nama_siswa }}</td>
-                                <td>{{ $p->siswa->kelas->nama_kelas }}</td>
-                                <td>{{ $p->buku->nama_buku }}</td>
-                                <td>{{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d M Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($p->tanggal_kembali)->format('d M Y') }}</td>
-                                <td>
-                                    <span class="badge-status {{ $statusClass }}">{{ $statusDisplay }}</span>
-                                </td>
-                                <td style="white-space: nowrap;">
-                                    <a href="{{ route('peminjaman.show', $p->id_peminjaman) }}" class="btn-action btn-detail">
-                                        <i class="fa-solid fa-eye"></i> Detail
-                                    </a>
-                                    <a href="{{ route('peminjaman.edit', $p->id_peminjaman) }}" class="btn-action btn-edit">
-                                        <i class="fa-solid fa-edit"></i> Edit
-                                    </a>
-                                    
-                                    {{-- Tombol Hapus - HANYA untuk Superadmin --}}
-                                    @if(session('role') === 'superadmin')
-                                        <form action="{{ route('peminjaman.destroy', $p->id_peminjaman) }}" 
-                                              method="POST" 
-                                              style="display: inline;"
-                                              onsubmit="return confirm('Yakin ingin menghapus data peminjaman ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn-action btn-delete">
-                                                <i class="fa-solid fa-trash"></i> Hapus
-                                            </button>
-                                        </form>
-                                    @endif
-                                </td>
+            <div class="glass-card rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/60">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-slate-400 text-[11px] uppercase tracking-[0.2em] font-black border-b border-slate-100">
+                                <th class="px-10 py-8 text-center">No</th>
+                                <th class="px-6 py-8">Peminjam & Kelas</th>
+                                <th class="px-6 py-8">Koleksi Buku</th>
+                                <th class="px-6 py-8 text-center">Periode Pinjam</th>
+                                <th class="px-6 py-8 text-center">Status</th>
+                                <th class="px-10 py-8 text-right">Manajemen</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" style="text-align: center; padding: 40px;">Belum ada data peminjaman</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            @forelse($peminjaman as $index => $p)
+                                @php
+                                    $today = \Carbon\Carbon::now()->startOfDay();
+                                    $tglKembali = \Carbon\Carbon::parse($p->tanggal_kembali)->startOfDay();
+                                    $isOverdue = $p->status != 'Dikembalikan' && $today->gt($tglKembali);
+                                @endphp
+                                <tr class="hover:bg-blue-50/40 transition-all group">
+                                    <td class="px-10 py-7 text-center font-bold text-slate-400">{{ $index + 1 }}</td>
+                                    <td class="px-6 py-7">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors leading-tight">{{ $p->siswa->nama_siswa }}</span>
+                                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Kelas: {{ $p->siswa->kelas->nama_kelas }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-7">
+                                        <span class="text-sm font-bold text-slate-600 italic">"{{ $p->buku->nama_buku }}"</span>
+                                    </td>
+                                    <td class="px-6 py-7 text-center">
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-lg">{{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d M Y') }}</span>
+                                            <span class="text-[9px] font-black text-slate-400 uppercase">Hingga: {{ \Carbon\Carbon::parse($p->tanggal_kembali)->format('d M Y') }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-7 text-center">
+                                        @if($p->status == 'Dikembalikan')
+                                            <span class="status-badge bg-emerald-100 text-emerald-600">Selesai</span>
+                                        @elseif($isOverdue)
+                                            <span class="status-badge bg-red-100 text-red-600 animate-pulse">Terlambat</span>
+                                        @else
+                                            <span class="status-badge bg-orange-100 text-orange-600">Dipinjam</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-10 py-7 text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('peminjaman.show', $p->id_peminjaman) }}" class="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all shadow-sm">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('peminjaman.edit', $p->id_peminjaman) }}" class="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-xl transition-all shadow-sm">
+                                                <i class="fa-solid fa-pencil"></i>
+                                            </a>
+                                            @if(session('role') === 'superadmin')
+                                                <form action="{{ route('peminjaman.destroy', $p->id_peminjaman) }}" method="POST" class="inline">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button" onclick="confirmDelete(this, '{{ $p->status }}')" class="w-10 h-10 flex items-center justify-center bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-xl transition-all shadow-sm">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-10 py-24 text-center opacity-30 italic font-bold text-xl">Data peminjaman tidak ditemukan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         @elseif($mode == 'show')
-            {{-- DETAIL MODE --}}
-            <div class="form-card">
-                <h2 class="page-title">Detail Peminjaman</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="glass-card p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 blue-gradient-glow opacity-10 rounded-full -mr-16 -mt-16"></div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tighter mb-10">Pratinjau Transaksi</h2>
 
-                @php
-                    $today = \Carbon\Carbon::now()->startOfDay();
-                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->startOfDay();
-                    
-                    $statusDisplay = $peminjaman->status;
-                    if ($peminjaman->status != 'Dikembalikan' && $today->gt($tglKembali)) {
-                        $statusDisplay = 'Terlambat';
-                    }
-                @endphp
-
-                <div style="background: #f8f9ff; padding: 30px; border-radius: 10px; margin-top: 30px;">
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">ID Peminjaman</span>
-                        <span style="color: #333; font-weight: 600;">{{ $peminjaman->id_peminjaman }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">Nama Siswa</span>
-                        <span style="color: #333; font-weight: 600;">{{ $peminjaman->siswa->nama_siswa }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">Kelas</span>
-                        <span style="color: #333; font-weight: 600;">{{ $peminjaman->siswa->kelas->nama_kelas }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">Judul Buku</span>
-                        <span style="color: #333; font-weight: 600;">{{ $peminjaman->buku->nama_buku }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">Tanggal Pinjam</span>
-                        <span style="color: #333; font-weight: 600;">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d F Y') }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">Tanggal Harus Kembali</span>
-                        <span style="color: #333; font-weight: 600;">{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d F Y') }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e8e8ff;">
-                        <span style="color: #666; font-weight: 500;">Tanggal Dikembalikan</span>
-                        <span style="color: #333; font-weight: 600;">
-                            {{ $peminjaman->tanggal_dikembalikan ? \Carbon\Carbon::parse($peminjaman->tanggal_dikembalikan)->format('d F Y') : 'Belum dikembalikan' }}
-                        </span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 15px 0;">
-                        <span style="color: #666; font-weight: 500;">Status</span>
-                        <span style="color: #333; font-weight: 600;">{{ $statusDisplay }}</span>
-                    </div>
-
-                    @php
-                        $hariTerlambat = 0;
-                        $denda = 0;
-                        if ($peminjaman->status != 'Dikembalikan' && $today->gt($tglKembali)) {
-                            $hariTerlambat = $today->diffInDays($tglKembali);
-                            $denda = $hariTerlambat * 500;
-                        }
-                    @endphp
-
-                    @if($hariTerlambat > 0)
-                        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-top: 2px solid #e8e8ff; margin-top: 10px;">
-                            <span style="color: #666; font-weight: 500;">Hari Terlambat</span>
-                            <span style="color: #d32f2f; font-weight: 600;">{{ $hariTerlambat }} hari</span>
+                    <div class="space-y-6">
+                        <div class="p-8 bg-slate-50/50 rounded-3xl border border-slate-100 inner-soft-shadow text-center">
+                            <label class="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">Status Saat Ini</label>
+                            <span class="text-2xl font-black uppercase tracking-tight text-slate-800">{{ $peminjaman->status }}</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; padding: 15px 0;">
-                            <span style="color: #666; font-weight: 500;">Denda</span>
-                            <span style="color: #d32f2f; font-weight: 600;">Rp {{ number_format($denda, 0, ',', '.') }}</span>
-                        </div>
-                    @endif
-                </div>
 
-                <div class="form-actions">
-                    <a href="{{ route('peminjaman.index') }}" class="btn-cancel" style="flex: none; width: 100%;">
-                        <i class="fa-solid fa-arrow-left"></i> Kembali
-                    </a>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-5 bg-white/50 rounded-2xl border border-slate-100">
+                                <span class="text-sm font-bold text-slate-400">Peminjam</span>
+                                <span class="font-black text-slate-800">{{ $peminjaman->siswa->nama_siswa }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-5 bg-white/50 rounded-2xl border border-slate-100">
+                                <span class="text-sm font-bold text-slate-400">Judul Buku</span>
+                                <span class="font-black text-slate-800 italic">"{{ $peminjaman->buku->nama_buku }}"</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-5 bg-white/50 rounded-2xl border border-slate-100 text-center">
+                                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Tgl Pinjam</label>
+                                    <span class="font-black text-slate-800">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y') }}</span>
+                                </div>
+                                <div class="p-5 bg-white/50 rounded-2xl border border-slate-100 text-center">
+                                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Batas Kembali</label>
+                                    <span class="font-black text-slate-800">{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('peminjaman.index') }}" class="w-full py-5 blue-gradient-glow text-white font-bold rounded-[2rem] text-center btn-hover-effect block shadow-xl mt-8">
+                            Tutup Rincian
+                        </a>
+                    </div>
                 </div>
             </div>
 
         @else
-            {{-- CREATE/EDIT MODE --}}
-            <div class="form-card">
-                <h2 class="page-title">{{ $mode == 'create' ? 'Form Tambah Peminjaman' : 'Form Edit Peminjaman' }}</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="glass-card p-10 md:p-14 rounded-[3.5rem] shadow-2xl relative overflow-hidden border border-white">
+                    <div class="absolute top-0 right-0 w-32 h-32 blue-gradient-glow opacity-10 rounded-full -mr-16 -mt-16"></div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tighter mb-10">
+                        {{ $mode == 'create' ? 'Entri Peminjaman Baru' : 'Perbarui Transaksi' }}
+                    </h2>
 
-                <form action="{{ $mode == 'create' ? route('peminjaman.store') : route('peminjaman.update', $peminjaman->id_peminjaman) }}" method="POST">
-                    @csrf
-                    @if($mode == 'edit')
-                        @method('PUT')
-                    @endif
+                    <form action="{{ $mode == 'create' ? route('peminjaman.store') : route('peminjaman.update', $peminjaman->id_peminjaman) }}" method="POST" class="space-y-6">
+                        @csrf
+                        @if($mode == 'edit') @method('PUT') @endif
 
-                    <div class="form-group">
-                        <label>Siswa <span class="required">*</span></label>
-                        <select name="id_siswa" 
-                                class="@error('id_siswa') is-invalid @enderror" 
-                                required>
-                            <option value="">Pilih Siswa</option>
-                            @foreach($siswa as $s)
-                                <option value="{{ $s->id_siswa }}" 
-                                    {{ old('id_siswa', $peminjaman->id_siswa ?? '') == $s->id_siswa ? 'selected' : '' }}>
-                                    {{ $s->nama_siswa }} ({{ $s->kelas->nama_kelas }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_siswa')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label>Buku <span class="required">*</span></label>
-                        <select name="id_buku" 
-                                class="@error('id_buku') is-invalid @enderror" 
-                                required>
-                            <option value="">Pilih Buku</option>
-                            @foreach($buku as $b)
-                                <option value="{{ $b->id_buku }}" 
-                                    {{ old('id_buku', $peminjaman->id_buku ?? '') == $b->id_buku ? 'selected' : '' }}>
-                                    {{ $b->nama_buku }} (Stok: {{ $b->stok }})
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="info-helper">* Hanya buku dengan stok tersedia yang dapat dipinjam</span>
-                        @error('id_buku')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tanggal Pinjam <span class="required">*</span></label>
-                        <input type="date" name="tanggal_pinjam" 
-                               class="@error('tanggal_pinjam') is-invalid @enderror"
-                               value="{{ old('tanggal_pinjam', $peminjaman->tanggal_pinjam ?? date('Y-m-d')) }}" 
-                               required>
-                        @error('tanggal_pinjam')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tanggal Harus Kembali <span class="required">*</span></label>
-                        <input type="date" name="tanggal_kembali" 
-                               class="@error('tanggal_kembali') is-invalid @enderror"
-                               value="{{ old('tanggal_kembali', $peminjaman->tanggal_kembali ?? date('Y-m-d', strtotime('+7 days'))) }}" 
-                               required>
-                        <span class="info-helper">* Biasanya 7 hari dari tanggal pinjam</span>
-                        @error('tanggal_kembali')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    @if($mode == 'edit')
-                        <div class="form-group">
-                            <label>Status <span class="required">*</span></label>
-                            <select name="status"
-                                    class="@error('status') is-invalid @enderror"
-                                    required>
-                                <option value="Dipinjam" {{ old('status', $peminjaman->status) == 'Dipinjam' ? 'selected' : '' }}>
-                                    Dipinjam
-                                </option>
-                                <option value="Dikembalikan" {{ old('status', $peminjaman->status) == 'Dikembalikan' ? 'selected' : '' }}>
-                                    Dikembalikan
-                                </option>
-                                <option value="Terlambat" {{ old('status', $peminjaman->status) == 'Terlambat' ? 'selected' : '' }}>
-                                    Terlambat
-                                </option>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Identitas Siswa</label>
+                            <select name="id_siswa" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold appearance-none" required>
+                                <option value="">-- Cari Nama Siswa --</option>
+                                @foreach($siswa as $s)
+                                    <option value="{{ $s->id_siswa }}" {{ old('id_siswa', $peminjaman->id_siswa ?? '') == $s->id_siswa ? 'selected' : '' }}>
+                                        {{ $s->nama_siswa }} (Kelas: {{ $s->kelas->nama_kelas }})
+                                    </option>
+                                @endforeach
                             </select>
-                            @error('status')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label>Tanggal Dikembalikan</label>
-                            <input type="date"
-                                   name="tanggal_dikembalikan"
-                                   class="@error('tanggal_dikembalikan') is-invalid @enderror"
-                                   value="{{ old('tanggal_dikembalikan', $peminjaman->tanggal_dikembalikan) }}">
-                            @error('tanggal_dikembalikan')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Koleksi Buku</label>
+                            <select name="id_buku" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold appearance-none" required>
+                                <option value="">-- Pilih Judul Buku --</option>
+                                @foreach($buku as $b)
+                                    <option value="{{ $b->id_buku }}" {{ old('id_buku', $peminjaman->id_buku ?? '') == $b->id_buku ? 'selected' : '' }}>
+                                        {{ $b->nama_buku }} (Stok Tersedia: {{ $b->stok }})
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
-                    @endif
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn-submit">
-                            <i class="fa-solid fa-save"></i> {{ $mode == 'create' ? 'Simpan' : 'Update' }}
-                        </button>
-                        <a href="{{ route('peminjaman.index') }}" class="btn-cancel">
-                            <i class="fa-solid fa-times"></i> Batal
-                        </a>
-                    </div>
-                </form>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tanggal Peminjaman</label>
+                                <input type="date" name="tanggal_pinjam" value="{{ old('tanggal_pinjam', $peminjaman->tanggal_pinjam ?? date('Y-m-d')) }}" 
+                                       class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tenggat Waktu</label>
+                                <input type="date" name="tanggal_kembali" value="{{ old('tanggal_kembali', $peminjaman->tanggal_kembali ?? date('Y-m-d', strtotime('+7 days'))) }}" 
+                                       class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold" required>
+                            </div>
+                        </div>
+
+                        @if($mode == 'edit')
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 mt-6">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-black text-emerald-600 uppercase tracking-widest ml-1">Update Status</label>
+                                    <select name="status" class="w-full bg-white border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-emerald-100 font-bold appearance-none">
+                                        <option value="Dipinjam" {{ old('status', $peminjaman->status) == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
+                                        <option value="Dikembalikan" {{ old('status', $peminjaman->status) == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
+                                        <option value="Terlambat" {{ old('status', $peminjaman->status) == 'Terlambat' ? 'selected' : '' }}>Terlambat</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tgl Pengembalian</label>
+                                    <input type="date" name="tanggal_dikembalikan" value="{{ old('tanggal_dikembalikan', $peminjaman->tanggal_dikembalikan) }}" 
+                                           class="w-full bg-white border-none rounded-2xl px-6 py-4 outline-none inner-soft-shadow focus:ring-2 focus:ring-blue-100 font-bold">
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="flex flex-col md:flex-row gap-4 pt-8">
+                            <button type="submit" class="flex-[2] blue-gradient-glow text-white font-bold py-5 rounded-[2rem] btn-hover-effect shadow-xl text-lg">
+                                <i class="fa-solid fa-save mr-2"></i> {{ $mode == 'create' ? 'Proses Pinjam' : 'Simpan Perubahan' }}
+                            </button>
+                            <a href="{{ route('peminjaman.index') }}" class="flex-1 bg-slate-100 text-slate-500 font-bold py-5 rounded-[2rem] text-center hover:bg-slate-200 transition-all text-lg">
+                                Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         @endif
     </div>
-</body>
 
+    <script>
+        function confirmDelete(button, status) {
+            // Cek apakah status masih Dipinjam atau Terlambat
+            if (status === 'Dipinjam' || status === 'Terlambat') {
+                Swal.fire({
+                    title: 'Tidak Dapat Dihapus!',
+                    text: "Peminjaman dengan status '" + status + "' tidak dapat dihapus. Silakan kembalikan buku terlebih dahulu.",
+                    icon: 'error',
+                    confirmButtonColor: '#2563eb',
+                    confirmButtonText: 'Mengerti',
+                    customClass: { confirmButton: 'rounded-xl px-8 py-3' }
+                });
+                return;
+            }
+
+            // Jika status Dikembalikan, lanjutkan konfirmasi hapus
+            Swal.fire({
+                title: 'Hapus Transaksi?',
+                text: "Data riwayat pinjam ini akan dihapus permanen dari sistem!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#f1f5f9',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { confirmButton: 'rounded-xl px-8 py-3', cancelButton: 'rounded-xl px-8 py-3 text-slate-600' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.closest('form').submit();
+                }
+            });
+        }
+    </script>
+</body>
 </html>

@@ -9,6 +9,7 @@ class Buku extends Model
     protected $table = 'buku';
     protected $primaryKey = 'id_buku';
     public $timestamps = false;
+    
     protected $fillable = [
         'nama_buku',
         'penulis',
@@ -18,4 +19,10 @@ class Buku extends Model
         'stok',
         'deskripsi',
     ];
+
+    // RELASI KE PEMINJAMAN BUKU (TAMBAHKAN INI)
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman_Buku::class, 'id_buku', 'id_buku');
+    }
 }

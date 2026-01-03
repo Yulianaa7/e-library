@@ -14,8 +14,9 @@ class Kelas extends Model
         'wali_kelas',
     ];
 
-    // public function siswa()
-    // {
-    //     return $this->hasMany(Siswa::class, 'id_kelas', 'id_kelas');
-    // }
+    public function siswa()
+    {
+        return $this->hasMany(Siswa::class, 'id_kelas', 'id_kelas');
+    }
+
 }

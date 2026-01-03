@@ -102,6 +102,13 @@ class BukuController extends Controller
     public function destroy(string $id)
     {
         $buku = Buku::findOrFail($id);
+        
+        // Cek apakah buku masih memiliki data peminjaman
+        if ($buku->peminjaman()->count() > 0) {
+            return redirect()->route('buku.index')
+                            ->with('error', 'Buku tidak dapat dihapus karena masih memiliki data peminjaman.');
+        }
+        
         $buku->delete();
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus.');
     }

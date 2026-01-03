@@ -4,269 +4,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistem Perpustakaan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <title>Dashboard - PustakaHub Premium</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #f0f9ff, #e0f2fe);
+            color: #1e293b;
+            min-height: 100vh;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f7fa;
+        .blue-gradient-glow {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .navbar h1 {
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .role-badge {
-            padding: 8px 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95em;
-            transition: all 0.3s;
-        }
-
-        .btn-logout:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 40px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .stat-card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-icon {
-            font-size: 48px;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 1.1em;
-            font-weight: 500;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
+        .glass-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
         }
 
         .menu-card {
             background: white;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 3px solid transparent;
-            text-decoration: none;
-            color: inherit;
-            display: block;
+            border: 1px solid #f1f5f9;
+            transition: all 0.4s ease;
         }
 
         .menu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            border-color: #667eea;
+            transform: translateY(-10px);
+            border-color: #3b82f6;
+            box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.15);
         }
 
-        .menu-icon {
-            font-size: 50px;
-            color: #667eea;
-            margin-bottom: 20px;
+        .icon-box {
+            background: #f0f7ff;
+            color: #3b82f6;
+            transition: all 0.3s ease;
         }
 
-        .menu-card h3 {
-            font-size: 1.4em;
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: 600;
+        .menu-card:hover .icon-box {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
         }
 
-        .menu-card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .section-title {
-            font-size: 1.8em;
-            color: #333;
-            margin-bottom: 25px;
-            margin-top: 40px;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .navbar h1 {
-                font-size: 1.5em;
-            }
-
-            .container {
-                padding: 0 20px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-
-            .stat-number {
-                font-size: 2em;
-            }
+        .inner-soft-shadow {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.02), inset -2px -2px 5px rgba(255,255,255,0.7);
         }
     </style>
 </head>
 
-<body>
-    <nav class="navbar">
-    <h1><i class="fa-solid fa-book-open"></i> Perpustakaan Digital</h1>
-    <div class="user-info">
-        <span class="role-badge">
-            <i class="fa-solid fa-user"></i> {{ session('name') ?? 'User' }} ({{ ucfirst(session('role') ?? 'guest') }})
-        </span>
-        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-            @csrf
-            <button type="submit" class="btn-logout">
-                <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </button>
-        </form>
-    </div>
-</nav>
+<body class="pb-20">
+    <div class="fixed top-0 left-0 w-1.5 h-full blue-gradient-glow z-[60]"></div>
 
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
-                <div class="stat-number">{{ $totalBooks ?? 0 }}</div>
-                <div class="stat-label">Total Buku</div>
+    <nav class="glass-nav sticky top-0 z-50 px-8 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 blue-gradient-glow rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">Pustaka<span class="text-blue-600">Hub</span></h1>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Premium Dashboard</span>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-                <div class="stat-number">{{ $totalStudents ?? 0 }}</div>
-                <div class="stat-label">Total Siswa</div>
+
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex flex-col items-end">
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Petugas Aktif</span>
+                    <span class="text-xs font-bold text-slate-700 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
+                        <i class="fa-solid fa-circle-user mr-1 text-blue-500"></i>
+                        {{ session('name') ?? 'User' }} ({{ ucfirst(session('role') ?? 'guest') }})
+                    </span>
+                </div>
+                <form action="{{ route('logout') }}" method="POST" class="m-0">
+                    @csrf
+                    <button type="submit" class="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-2xl transition-all text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-power-off text-[10px]"></i> Logout
+                    </button>
+                </form>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-book-open-reader"></i></div>
-                <div class="stat-number">{{ $activeBorrows ?? 0 }}</div>
-                <div class="stat-label">Sedang Dipinjam</div>
+        </div>
+    </nav>
+
+    <div class="container max-w-7xl mx-auto px-6 mt-16">
+        <div class="mb-12 text-center md:text-left">
+            <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Ringkasan Aktivitas</h2>
+            <p class="text-slate-500 mt-3 font-medium text-lg">Pantau statistik perpustakaan Anda secara real-time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            <div class="glass-card p-10 rounded-[3.5rem] flex flex-col items-center text-center">
+                <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 text-2xl inner-soft-shadow">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <span class="text-4xl font-black text-slate-800">{{ $totalBooks ?? 0 }}</span>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">Total Koleksi</p>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                <div class="stat-number">{{ $overdueBooks ?? 0 }}</div>
-                <div class="stat-label">Terlambat</div>
+
+            <div class="glass-card p-10 rounded-[3.5rem] flex flex-col items-center text-center">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 text-2xl inner-soft-shadow">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <span class="text-4xl font-black text-slate-800">{{ $totalStudents ?? 0 }}</span>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">Siswa Terdaftar</p>
+            </div>
+
+            <div class="glass-card p-10 rounded-[3.5rem] flex flex-col items-center text-center border-emerald-100">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5 text-2xl inner-soft-shadow">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                </div>
+                <span class="text-4xl font-black text-slate-800">{{ $activeBorrows ?? 0 }}</span>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">Sedang Pinjam</p>
+            </div>
+
+            <div class="glass-card p-10 rounded-[3.5rem] flex flex-col items-center text-center border-red-100">
+                <div class="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-5 text-2xl inner-soft-shadow">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <span class="text-4xl font-black text-red-600">{{ $overdueBooks ?? 0 }}</span>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">Terlambat</p>
             </div>
         </div>
 
-        <h2 class="section-title">Menu Utama</h2>
-        <div class="menu-grid">
-            <a href="{{ route('buku.index') }}" class="menu-card">
-                <div class="menu-icon"><i class="fa-solid fa-book"></i></div>
-                <h3>Manajemen Buku</h3>
-                <p>Kelola data buku perpustakaan</p>
+        <div class="flex items-center gap-6 mb-12">
+            <h3 class="text-2xl font-black text-slate-900 tracking-tight">Navigasi Utama</h3>
+            <div class="h-[1px] flex-1 bg-slate-200"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+            <a href="{{ route('buku.index') }}" class="menu-card p-10 rounded-[3.5rem] flex flex-col items-center text-center group">
+                <div class="w-20 h-20 icon-box rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
+                    <i class="fa-solid fa-book-bookmark text-3xl"></i>
+                </div>
+                <h4 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Buku</h4>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Data Koleksi</p>
             </a>
 
-            <a href="{{ route('siswa.index') }}" class="menu-card">
-                <div class="menu-icon"><i class="fa-solid fa-user-graduate"></i></div>
-                <h3>Manajemen Siswa</h3>
-                <p>Kelola data siswa dan anggota</p>
+            <a href="{{ route('siswa.index') }}" class="menu-card p-10 rounded-[3.5rem] flex flex-col items-center text-center group">
+                <div class="w-20 h-20 icon-box rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
+                    <i class="fa-solid fa-users-viewfinder text-3xl"></i>
+                </div>
+                <h4 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Siswa</h4>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Manajemen Siswa</p>
             </a>
 
-            <a href="{{ route('kelas.index') }}" class="menu-card">
-                <div class="menu-icon"><i class="fa-solid fa-school"></i></div>
-                <h3>Manajemen Kelas</h3>
-                <p>Kelola data kelas</p>
+            <a href="{{ route('kelas.index') }}" class="menu-card p-10 rounded-[3.5rem] flex flex-col items-center text-center group">
+                <div class="w-20 h-20 icon-box rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
+                    <i class="fa-solid fa-school-flag text-3xl"></i>
+                </div>
+                <h4 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Kelas</h4>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Struktur Kelas</p>
             </a>
 
-            <a href="{{ route('peminjaman.index') }}" class="menu-card">
-                <div class="menu-icon"><i class="fa-solid fa-book-open-reader"></i></div>
-                <h3>Peminjaman Buku</h3>
-                <p>Proses peminjaman buku</p>
+            <a href="{{ route('peminjaman.index') }}" class="menu-card p-10 rounded-[3.5rem] flex flex-col items-center text-center group">
+                <div class="w-20 h-20 icon-box rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
+                    <i class="fa-solid fa-file-signature text-3xl"></i>
+                </div>
+                <h4 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Pinjam</h4>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Input Transaksi</p>
             </a>
 
-            <a href="{{ route('pengembalian.index') }}" class="menu-card">
-                <div class="menu-icon"><i class="fa-solid fa-arrow-rotate-left"></i></div>
-                <h3>Pengembalian Buku</h3>
-                <p>Proses pengembalian dan denda</p>
+            <a href="{{ route('pengembalian.index') }}" class="menu-card p-10 rounded-[3.5rem] flex flex-col items-center text-center group">
+                <div class="w-20 h-20 icon-box rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
+                    <i class="fa-solid fa-clock-rotate-left text-3xl"></i>
+                </div>
+                <h4 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Kembali</h4>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Proses & Denda</p>
             </a>
         </div>
     </div>
+
+    <footer class="mt-24 text-center">
+        <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">&copy; 2026 PustakaHub Premium System</p>
+    </footer>
 </body>
 
 </html>
