@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $mode == 'index' ? 'Sirkulasi Buku' : ($mode == 'create' ? 'Input Peminjaman' : 'Edit Transaksi') }} - PustakaHub Premium</title>
+    <title>{{ $mode == 'index' ? 'Peminjaman Buku' : ($mode == 'create' ? 'Input Peminjaman' : 'Edit Transaksi') }} - SmartLib</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -71,9 +71,9 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
-                        @if($mode == 'index') Sirkulasi Buku @else Transaksi @endif
+                        @if($mode == 'index') Peminjaman Buku @else Transaksi @endif
                     </h1>
-                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">PustakaHub System</span>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">SmartLib</span>
                 </div>
             </div>
 
@@ -89,7 +89,7 @@
         @if($mode == 'index')
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
-                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Riwayat Sirkulasi</h2>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Riwayat Peminjaman</h2>
                     <p class="text-slate-500 font-medium">Kelola peminjaman dan pantau masa aktif pengembalian.</p>
                 </div>
                 <a href="{{ route('peminjaman.create') }}" class="w-full md:w-auto blue-gradient-glow text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 btn-hover-effect">

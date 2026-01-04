@@ -74,7 +74,7 @@
                     <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
                         {{ $mode == 'index' ? 'Pengembalian' : 'Konfirmasi' }}
                     </h1>
-                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Sirkulasi & Penagihan</span>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">SmartLib</span>
                 </div>
             </div>
 

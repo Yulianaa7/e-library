@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - PustakaHub Premium</title>
+    <title>Login - SmartLib</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -81,21 +81,10 @@
                     <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-[2rem] flex items-center justify-center mb-8 shadow-xl mx-auto md:mx-0 floating-icon text-white text-4xl">
                         <i class="fa-solid fa-layer-group"></i>
                     </div>
-                    <h1 class="text-5xl font-black tracking-tighter mb-4">Pustaka<span class="text-blue-200">Hub</span></h1>
+                    <h1 class="text-5xl font-black tracking-tighter mb-4">Smart<span class="text-blue-200">Lib</span></h1>
                     <p class="text-blue-50 text-lg font-medium leading-relaxed opacity-90 mb-8">
                         Sistem Manajemen Perpustakaan Modern untuk pengalaman literasi digital yang efisien.
                     </p>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                            <i class="fa-solid fa-shield-halved text-blue-200 text-xl"></i>
-                            <span class="text-sm font-bold uppercase tracking-wider">Akses Terenkripsi</span>
-                        </div>
-                        <div class="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                            <i class="fa-solid fa-bolt text-blue-200 text-xl"></i>
-                            <span class="text-sm font-bold uppercase tracking-wider">Sirkulasi Real-time</span>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -116,7 +105,7 @@
                     @csrf
                     
                     <div class="space-y-2">
-                        <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">ID Pengguna</label>
+                        <label class="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Username</label>
                         <div class="relative group">
                             <i class="fas fa-user absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
                             <input type="text" name="username" value="{{ old('username') }}"
@@ -148,7 +137,7 @@
 
                 <div class="mt-12 text-center border-t border-slate-100 pt-8">
                     <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">
-                        &copy; 2026 PustakaHub Premium System
+                        &copy; 2026 SmartLib
                     </p>
                 </div>
             </div>

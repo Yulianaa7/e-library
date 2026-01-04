@@ -80,15 +80,38 @@ class SiswaController extends Controller
 
     public function destroy(string $id)
     {
-        $siswa = Siswa::findOrFail($id);
+        try {
+            $siswa = Siswa::findOrFail($id);
 
-        // Cek apakah siswa memiliki data peminjaman
-        if ($siswa->peminjaman()->count() > 0) {
+            // Cek apakah siswa memiliki peminjaman dengan status 'Dipinjam'
+            $peminjamanAktif = $siswa->peminjaman()
+                ->where('status', 'Dipinjam')
+                ->count();
+
+            if ($peminjamanAktif > 0) {
+                return redirect()->route('siswa.index')
+                    ->with('error', 'Siswa tidak dapat dihapus karena masih memiliki peminjaman aktif.');
+            }
+
+            // Hapus semua data pengembalian yang terkait dengan peminjaman siswa ini
+            foreach ($siswa->peminjaman as $peminjaman) {
+                // Hapus pengembalian yang terkait
+                if ($peminjaman->pengembalian) {
+                    $peminjaman->pengembalian->delete();
+                }
+            }
+
+            // Hapus semua peminjaman siswa (yang sudah selesai)
+            $siswa->peminjaman()->delete();
+
+            // Hapus siswa
+            $siswa->delete();
+
+            return redirect()->route('siswa.index')->with('success', 'Siswa berhasil dihapus.');
+
+        } catch (\Exception $e) {
             return redirect()->route('siswa.index')
-                ->with('error', 'Siswa tidak dapat dihapus karena masih memiliki data peminjaman buku.');
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        $siswa->delete();
-        return redirect()->route('siswa.index')->with('success', 'Siswa berhasil dihapus.');
     }
 }

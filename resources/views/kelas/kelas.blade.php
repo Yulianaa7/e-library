@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $mode == 'index' ? 'Manajemen Kelas' : ($mode == 'create' ? 'Tambah Kelas' : 'Edit Kelas') }} - PustakaHub Premium</title>
+    <title>{{ $mode == 'index' ? 'Manajemen Kelas' : ($mode == 'create' ? 'Tambah Kelas' : 'Edit Kelas') }} - SmartLib</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
                     <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
                         @if($mode == 'index') Manajemen Kelas @else Form {{ $mode == 'create' ? 'Baru' : 'Edit' }} Kelas @endif
                     </h1>
-                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">PustakaHub System</span>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">SmartLib</span>
                 </div>
             </div>
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - PustakaHub Premium</title>
+    <title>Dashboard - SmartLib</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -82,8 +82,8 @@
                     <i class="fa-solid fa-layer-group"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">Pustaka<span class="text-blue-600">Hub</span></h1>
-                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Premium Dashboard</span>
+                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">Smart<span class="text-blue-600">Lib</span></h1>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">Dashboard</span>
                 </div>
             </div>
 
@@ -188,13 +188,13 @@
                     <i class="fa-solid fa-clock-rotate-left text-3xl"></i>
                 </div>
                 <h4 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Kembali</h4>
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Proses & Denda</p>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-tighter">Proses Pengembalian & Denda</p>
             </a>
         </div>
     </div>
 
     <footer class="mt-24 text-center">
-        <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">&copy; 2026 PustakaHub Premium System</p>
+        <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">&copy; 2026 SmartLib</p>
     </footer>
 </body>
 

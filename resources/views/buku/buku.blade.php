@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $mode == 'index' ? 'Manajemen Buku' : ($mode == 'create' ? 'Tambah Buku' : 'Edit Buku') }} - PustakaHub Premium</title>
+    <title>{{ $mode == 'index' ? 'Manajemen Buku' : ($mode == 'create' ? 'Tambah Buku' : 'Edit Buku') }} - SmartLib</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -81,13 +81,13 @@
                     <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
                         @if($mode == 'index') Manajemen Buku @else Form {{ $mode == 'create' ? 'Tambah' : 'Edit' }} Buku @endif
                     </h1>
-                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">PustakaHub System</span>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em]">SmartLib</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="hidden md:flex flex-col items-end mr-2">
-                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Petugas</span>
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Admin</span>
                     <span class="text-xs font-bold text-slate-700">{{ session('name') }}</span>
                 </div>
                 <a href="{{ $mode == 'index' ? route('dashboard') : route('buku.index') }}" class="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-xl transition-all text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
@@ -102,7 +102,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
                     <h2 class="text-3xl font-black text-slate-900 tracking-tight">Katalog Buku</h2>
-                    <p class="text-slate-500 font-medium">Kelola stok dan data pustaka dalam satu panel.</p>
+                    <p class="text-slate-500 font-medium">Kelola stok dan data buku dalam satu panel.</p>
                 </div>
                 <a href="{{ route('buku.create') }}" class="w-full md:w-auto blue-gradient-glow text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 btn-hover-effect">
                     <i class="fa-solid fa-plus-circle text-lg"></i> Tambah Koleksi Baru
