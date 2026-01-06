@@ -358,7 +358,6 @@
 
     <script>
         function confirmDelete(button, status) {
-            // Cek apakah status masih Dipinjam atau Terlambat
             if (status === 'Dipinjam' || status === 'Terlambat') {
                 Swal.fire({
                     title: 'Tidak Dapat Dihapus!',
@@ -371,7 +370,6 @@
                 return;
             }
 
-            // Jika status Dikembalikan, lanjutkan konfirmasi hapus
             Swal.fire({
                 title: 'Hapus Transaksi?',
                 text: "Data riwayat pinjam ini akan dihapus permanen dari sistem!",

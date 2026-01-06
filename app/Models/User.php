@@ -36,9 +36,8 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
     
-    // PENTING: Override method untuk login dengan username
     public function getAuthIdentifierName()
     {
-        return 'username'; // Login menggunakan username, bukan email
+        return 'username'; 
     }
 }

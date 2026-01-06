@@ -11,12 +11,10 @@ class Checkrole
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Cek session manual, bukan auth()->check()
         if (!session()->has('user_id')) {
             return redirect()->route('login');
         }
 
-        // Ambil user dari session
         $user = User::find(session('user_id'));
         
         if (!$user) {

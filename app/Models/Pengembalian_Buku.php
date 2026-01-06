@@ -11,7 +11,7 @@ class Pengembalian_Buku extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'id_peminjaman',  // ← Foreign key ke peminjaman_buku.id_peminjaman_buku
+        'id_peminjaman',  
         'tanggal_pengembalian',
         'denda',
     ];

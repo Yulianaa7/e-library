@@ -11,11 +11,10 @@ class PengembalianController extends Controller
 {
     public function index(Request $request)
     {
-        // **PERBAIKAN: Hanya tampilkan peminjaman yang belum dikembalikan (status Dipinjam atau Terlambat)**
         $peminjaman = Peminjaman_Buku::join('siswa', 'siswa.id_siswa', '=', 'peminjaman_buku.id_siswa')
             ->join('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
             ->join('buku', 'buku.id_buku', '=', 'peminjaman_buku.id_buku')
-            ->whereIn('peminjaman_buku.status', ['Dipinjam', 'Terlambat']) // **INI YANG PENTING**
+            ->whereIn('peminjaman_buku.status', ['Dipinjam', 'Terlambat']) 
             ->select('peminjaman_buku.*', 'siswa.nama_siswa', 'kelas.nama_kelas', 'buku.nama_buku')
             ->orderBy('peminjaman_buku.tanggal_kembali', 'asc')
             ->get();
@@ -55,7 +54,6 @@ class PengembalianController extends Controller
 
         $dt_kembali = Peminjaman_Buku::where('id_peminjaman', $request->id_peminjaman)->first();
 
-        // Cek apakah sudah dikembalikan
         if ($dt_kembali->status === 'Dikembalikan') {
             return redirect()->route('pengembalian.index')->with('error', 'Buku ini sudah dikembalikan.');
         }
@@ -73,7 +71,7 @@ class PengembalianController extends Controller
             $denda = $hariTerlambat * $dendaperhari;
         }
 
-        // **PERBAIKAN: Simpan status lama SEBELUM diupdate**
+        // Simpan status lama SEBELUM diupdate
         $statusLama = $dt_kembali->status;
 
         // Simpan pengembalian
@@ -89,7 +87,7 @@ class PengembalianController extends Controller
             'tanggal_dikembalikan' => $today->format('Y-m-d')
         ]);
 
-        // **PERBAIKAN: Kembalikan stok HANYA jika status lama adalah Dipinjam atau Terlambat**
+        // Kembalikan stok HANYA jika status lama adalah Dipinjam atau Terlambat
         if (in_array($statusLama, ['Dipinjam', 'Terlambat'])) {
             $buku = \App\Models\Buku::find($dt_kembali->id_buku);
             if ($buku) {

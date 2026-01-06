@@ -51,7 +51,7 @@ class PeminjamanController extends Controller
             'buku' => Buku::where('stok', '>', 0)->get()
         ]);
     }
-
+    
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -74,7 +74,7 @@ class PeminjamanController extends Controller
 
         Peminjaman_Buku::create($validated);
 
-        // Kurangi stok karena status default adalah Dipinjam
+        // Kurangi stok karena Dipinjam
         $buku->decrement('stok');
 
         return redirect()->route('peminjaman.index')
@@ -177,7 +177,7 @@ class PeminjamanController extends Controller
             $validated['tanggal_dikembalikan'] = null;
         }
 
-        // **TAMBAHAN: Hapus dari tabel pengembalian jika status berubah ke Dikembalikan melalui edit peminjaman**
+        //Hapus dari tabel pengembalian jika status berubah ke Dikembalikan melalui edit peminjaman
         if ($statusBaru === 'Dikembalikan') {
             // Hapus data pengembalian jika ada (untuk menghindari duplikasi)
             \App\Models\Pengembalian_Buku::where('id_peminjaman', $id)->delete();
@@ -202,7 +202,6 @@ class PeminjamanController extends Controller
         // Hapus data pengembalian yang terkait terlebih dahulu
         \App\Models\Pengembalian_Buku::where('id_peminjaman', $id)->delete();
 
-        // Hapus peminjaman (stok tidak perlu dikembalikan karena status sudah Dikembalikan)
         $peminjaman->delete();
 
         return redirect()->route('peminjaman.index')

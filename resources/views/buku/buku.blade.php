@@ -159,6 +159,7 @@
                             <tr class="border-b border-slate-100">
                                 <th class="px-8 py-6 text-center w-20">No</th>
                                 <th class="px-6 py-6">Informasi Buku</th>
+                                <th class="px-6 py-6">Sinopsis</th>
                                 <th class="px-6 py-6">Kategori</th>
                                 <th class="px-6 py-6 text-center">Tahun</th>
                                 <th class="px-6 py-6 text-center">Stok</th>
@@ -174,6 +175,13 @@
                                             <span class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors">{{ $item->nama_buku }}</span>
                                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">{{ $item->penulis }} • {{ $item->penerbit }}</span>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-6 max-w-xs">
+                                        @if($item->deskripsi)
+                                            <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">{{ $item->deskripsi }}</p>
+                                        @else
+                                            <span class="text-xs text-slate-400 italic">Tidak ada sinopsis</span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-6">
                                         <span class="bg-blue-100 text-blue-600 px-4 py-1.5 rounded-xl font-extrabold text-[10px] uppercase tracking-wider">
@@ -208,7 +216,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-8 py-20 text-center">
+                                    <td colspan="7" class="px-8 py-20 text-center">
                                         <div class="flex flex-col items-center opacity-20 italic">
                                             <i class="fa-solid fa-inbox text-6xl mb-4"></i>
                                             <p class="text-xl font-bold">Katalog buku masih kosong</p>
